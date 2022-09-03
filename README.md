@@ -1,4 +1,4 @@
-
+[![Build Status](https://app.travis-ci.com/MasterMaxTs/project_autoshop.svg?branch=master)](https://app.travis-ci.com/MasterMaxTs/project_autoshop)
 
 Это учебный проект по разработке сайта по продаже машин.
 

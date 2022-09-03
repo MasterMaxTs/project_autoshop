@@ -1,15 +1,21 @@
-# используем язык java. Travis CI поддерживает другие языки тоже.
+
 language: java
 jdk:
   - openjdk15
 
-# используем режим обычного пользователя для сборки проекта.
 sudo: false
 
-# Отправлять уведомление на почту youremail@smtp.ru(Изменить на свою) если сборка упала
 notifications:
   email:
     recipients:
       max86ts@gmail.com
     on_success: never # default: change
     on_failure: always # default: always
+
+  # Start PostgreSQL
+services:
+  - postgresql
+
+  # Create a database
+before_script:
+  - psql -c 'create database travis_ci_test;' -U postgres

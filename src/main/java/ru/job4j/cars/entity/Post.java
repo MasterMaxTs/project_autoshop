@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "auto_post")
@@ -26,6 +28,24 @@ public class Post {
     @Column(name = "created")
     private Timestamp created;
 
-    @Column(name = "auto_user_id")
-    private int userId;
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.REFRESH, CascadeType.DETACH})
+    @JoinColumn(name = "auto_user_id")
+    private User user;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.REFRESH, CascadeType.DETACH})
+    @JoinTable(
+            name = "participants",
+            joinColumns = {@JoinColumn(name = "post_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")}
+    )
+    private Set<User> participants;
+
+    public void addParticipantToPost(User user) {
+        if (participants == null) {
+            participants = new HashSet<>();
+        }
+        participants.add(user);
+    }
 }

@@ -26,7 +26,6 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "auto_user_id")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Set<Post> posts;
 }

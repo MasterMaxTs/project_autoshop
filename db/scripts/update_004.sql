@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS participants
 (
-    id      SERIAL PRIMARY KEY,
-    post_id INT REFERENCES auto_post (id),
-    user_id INT REFERENCES auto_user (id)
+    post_id INT REFERENCES auto_posts (id),
+    user_id INT REFERENCES auto_users (id),
+    PRIMARY KEY (post_id, user_id)
 );

@@ -5,14 +5,13 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
-@Table(name = "auto_users")
+@Table(name = "auto_engines")
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class User {
+public class Engine {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,15 +22,6 @@ public class User {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "email")
-    private String email;
-
-    @Column(name = "login")
-    private String login;
-
-    @Column(name = "password")
-    private String password;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    private Set<Post> posts;
+    @Column(name = "power")
+    private int power;
 }

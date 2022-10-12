@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.cars.entity.Post;
 import ru.job4j.cars.entity.User;
+import ru.job4j.cars.repository.postrepository.PostRepoFilter;
 import ru.job4j.cars.repository.postrepository.PostRepository;
 
 import java.util.List;
@@ -11,9 +12,10 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class PostServiceImpl implements PostService {
+public class PostServiceImpl implements PostService, PostFilter {
 
     private final PostRepository store;
+    private final PostRepoFilter storeFilter;
 
     @Override
     public List<Post> findAll() {
@@ -43,5 +45,15 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<Post> findAll(User user) {
         return store.findAll(user);
+    }
+
+    @Override
+    public List<Post> findAllForLastDay() {
+        return storeFilter.findAllForLastDay();
+    }
+
+    @Override
+    public List<Post> findAllForCarBrand(String brand) {
+        return storeFilter.findAllForCarBrand(brand);
     }
 }

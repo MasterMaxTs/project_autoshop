@@ -6,6 +6,7 @@ import ru.job4j.cars.entity.Post;
 import ru.job4j.cars.entity.User;
 import ru.job4j.cars.repository.CrudRepository;
 
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -60,14 +61,8 @@ public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
 
     @Override
     public List<Post> findAllForLastDay() {
-        Calendar start = Calendar.getInstance();
-        Calendar end = Calendar.getInstance();
-        start.set(Calendar.HOUR, 0);
-        start.set(Calendar.MINUTE, 0);
-        start.set(Calendar.SECOND, 0);
-        end.set(Calendar.HOUR, 23);
-        end.set(Calendar.MINUTE, 59);
-        end.set(Calendar.SECOND, 59);
+        LocalDateTime start = LocalDateTime.now();
+        LocalDateTime end = start.minusDays(1L);
         return crudRepository.query(
                 "from Post where created between :start and :end ",
                 Post.class,

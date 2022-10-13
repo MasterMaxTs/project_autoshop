@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,8 +27,7 @@ public class Post {
     private String text;
 
     @Column(name = "created")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Calendar created;
+    private LocalDateTime created;
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.REFRESH, CascadeType.DETACH})

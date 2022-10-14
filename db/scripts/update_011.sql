@@ -1,0 +1,5 @@
+ALTER TABLE auto_cars DROP COLUMN name;
+ALTER TABLE auto_cars ADD COLUMN brand_id INT NOT NULL REFERENCES auto_car_brands(id);
+ALTER TABLE auto_cars ADD COLUMN color VARCHAR(20) NOT NULL;
+ALTER TABLE auto_cars ADD COLUMN model_year INT NOT NULL;
+ALTER TABLE auto_cars ADD COLUMN mileage INT NOT NULL;

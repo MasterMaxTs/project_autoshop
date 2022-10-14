@@ -3,11 +3,9 @@ package ru.job4j.cars.repository.postrepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 import ru.job4j.cars.entity.Post;
-import ru.job4j.cars.entity.User;
 import ru.job4j.cars.repository.CrudRepository;
 
 import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,6 +15,15 @@ import java.util.Optional;
 public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
 
     private final CrudRepository crudRepository;
+
+    @Override
+    public List<Post> findAllByUserId(int id) {
+        return crudRepository.query(
+                "from Post p where p.user.id = :fId",
+                Post.class,
+                Map.of("fId", id)
+        );
+    }
 
     @Override
     public List<Post> findAll() {
@@ -51,18 +58,9 @@ public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
     }
 
     @Override
-    public List<Post> findAll(User user) {
-        return crudRepository.query(
-                "from Post where user = :fUser",
-                Post.class,
-                Map.of("fUser", user)
-        );
-    }
-
-    @Override
     public List<Post> findAllForLastDay() {
-        LocalDateTime start = LocalDateTime.now();
-        LocalDateTime end = start.minusDays(1L);
+        LocalDateTime end = LocalDateTime.now();
+        LocalDateTime start = end.minusDays(1L);
         return crudRepository.query(
                 "from Post where created between :start and :end ",
                 Post.class,
@@ -73,7 +71,7 @@ public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
     @Override
     public List<Post> findAllForCarBrand(String brand) {
         return crudRepository.query(
-                "from Post p inner join p.car c with c.brand = :fBrand",
+                "from Post p where p.car.brand = :fBrand",
                 Post.class,
                 Map.of("fBrand", brand)
         );

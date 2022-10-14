@@ -1,0 +1,1 @@
+ALTER TABLE auto_engines ADD COLUMN volume FLOAT NOT NULL;

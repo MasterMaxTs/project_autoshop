@@ -18,6 +18,7 @@
         <mapping class="ru.job4j.cars.entity.Post"/>
         <mapping class="ru.job4j.cars.entity.User"/>
         <mapping class="ru.job4j.cars.entity.Car"/>
+        <mapping class="ru.job4j.cars.entity.CarBrand"/>
         <mapping class="ru.job4j.cars.entity.Driver"/>
         <mapping class="ru.job4j.cars.entity.Engine"/>
         <mapping class="ru.job4j.cars.entity.PriceHistory"/>

@@ -31,7 +31,8 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
                 <a class="nav-item nav-link active" th:href="@{/posts}"><b>Все объявления</b></a>
-                <a class="nav-item nav-link" th:href="@{/addPost}">Создать объявление</a>
+                <a class="nav-item nav-link" th:href="@{|/posts/user/${user.id}|}">Мои объявления</a>
+                <a class="nav-item nav-link" th:href="@{/posts/new}">Создать объявление</a>
                 <a class="nav-item nav-link" th:href="@{/formAddUser}">Зарегистрироваться</a>
                 <a class="nav-item nav-link" th:if="${user.name == 'Гость'}">
                     <form th:action="@{/loginPage}" method="GET">

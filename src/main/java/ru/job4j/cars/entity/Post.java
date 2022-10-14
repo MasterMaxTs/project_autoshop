@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,7 +26,7 @@ public class Post {
     private String text;
 
     @Column(name = "created")
-    private LocalDateTime created;
+    private final LocalDateTime created = LocalDateTime.now();
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.REFRESH, CascadeType.DETACH})

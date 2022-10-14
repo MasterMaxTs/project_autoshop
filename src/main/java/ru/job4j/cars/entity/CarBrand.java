@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "auto_engines")
+@Table(name = "auto_car_brands")
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Engine {
+public class CarBrand {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,12 +19,6 @@ public class Engine {
     @EqualsAndHashCode.Include
     private int id;
 
-    @Column(name = "name")
+    @Column(name = "brand")
     private String name;
-
-    @Column(name = "volume")
-    private double volume;
-
-    @Column(name = "power")
-    private int power;
 }

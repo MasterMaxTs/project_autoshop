@@ -21,8 +21,19 @@ public class Car {
     @EqualsAndHashCode.Include
     private int id;
 
-    @Column(name = "name")
-    private String brand;
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.REFRESH, CascadeType.DETACH})
+    @JoinColumn(name = "brand_id")
+    private CarBrand brand;
+
+    @Column(name = "color")
+    private String color;
+
+    @Column(name = "model_year")
+    private int modelYear;
+
+    @Column(name = "mileage")
+    private int mileage;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "engine_id")

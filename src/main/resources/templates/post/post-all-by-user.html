@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+<html lang="en">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -31,9 +31,9 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
                 <a class="nav-item nav-link" th:href="@{/posts}">Все объявления</a>
-                <a class="nav-item nav-link" th:href="@{|/posts/user/${user.id}|}">Мои объявления</a>
+                <a class="nav-item nav-link active" th:href="@{|/posts/user/${user.id}|}"><b>Мои объявления</b></a>
                 <a class="nav-item nav-link" th:href="@{/posts/new}">Создать объявление</a>
-                <a class="nav-item nav-link active" th:href="@{/formAddUser}"><b>Зарегистрироваться</b></a>
+                <a class="nav-item nav-link" th:href="@{/formAddUser}">Зарегистрироваться</a>
                 <a class="nav-item nav-link" th:if="${user.name == 'Гость'}">
                     <form th:action="@{/loginPage}" method="GET">
                         <button type="submit" class="btn btn-info"><span th:text="${user.name}"></span> | Войти</button>
@@ -51,12 +51,22 @@
             </div>
         </div>
     </nav>
-    <div class="card-body">
-        <p> Уважаемый, <span th:text="${user.name}"></span>, Вы успешно зарегистрировались в системе!</p><br>
-        <form th:action="@{/posts}" method="GET">
-            <button type="submit" class="btn btn-primary">К объявлениям</button>
-        </form>
-    </div>
+    <table class="table table-striped">
+        <caption style="caption-side: top; text-align: right">Все объявления</caption>
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Фото</th>
+            <th scope="col">Описание</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="post: ${userPosts}">
+            <td></td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 </body>
 </html>

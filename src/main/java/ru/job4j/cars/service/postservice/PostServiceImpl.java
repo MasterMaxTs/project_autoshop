@@ -55,4 +55,19 @@ public class PostServiceImpl implements PostService, PostFilter {
     public List<Post> findAllForCarBrand(String brand) {
         return storeFilter.findAllForCarBrand(brand);
     }
+
+    @Override
+    public List<Post> findAllBy(String brand,
+                                String modelYear,
+                                String mileage,
+                                String transmission,
+                                String volume) {
+        return storeFilter.findAllBy(brand, modelYear, mileage,
+                                     transmission, volume);
+    }
+
+    @Override
+    public List<Post> findAllByPrice(int minPrice, int maxPrice) {
+        return storeFilter.findAllByPrice(minPrice, maxPrice);
+    }
 }

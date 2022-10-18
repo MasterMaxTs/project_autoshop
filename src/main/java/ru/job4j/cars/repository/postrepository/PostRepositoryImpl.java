@@ -28,7 +28,7 @@ public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
     @Override
     public List<Post> findAll() {
         return crudRepository.query(
-                "from Post order by created desc", Post.class
+                "from Post order by updated desc", Post.class
         );
     }
 
@@ -74,6 +74,41 @@ public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
                 "from Post p where p.car.brand = :fBrand",
                 Post.class,
                 Map.of("fBrand", brand)
+        );
+    }
+
+    @Override
+    public List<Post> findAllBy(String brand,
+                                String modelYear,
+                                String mileage,
+                                String transmission,
+                                String volume
+                                ) {
+        return crudRepository.query(
+                "from Post p where"
+                        + " p.car.brand.name = :fBrand"
+                        + " AND p.car.modelYear >=:fYear"
+                        + " AND p.car.mileage <= :fMileage"
+                        + " AND p.car.engine.transmission = :fTransmission"
+                        + " AND p.car.engine.volume = :fVolume",
+                Post.class,
+                Map.of(
+                        "fBrand", brand,
+                        "fYear", modelYear,
+                        "fMileage", mileage,
+                        "fTransmission", transmission,
+                        "fVolume", volume
+                ));
+    }
+
+    @Override
+    public List<Post> findAllByPrice(int minPrice, int maxPrice) {
+        return crudRepository.query(
+                "from Post p where"
+                + " p.priceHistories.get(priceHistories.size() - 1).after between"
+                + " :fMinPrice AND :fMaxPrice",
+                Post.class,
+                Map.of("fMinPrice", minPrice, "fMaxPrice", maxPrice)
         );
     }
 }

@@ -30,10 +30,10 @@ public class Car {
     private String color;
 
     @Column(name = "model_year")
-    private int modelYear;
+    private String modelYear;
 
     @Column(name = "mileage")
-    private int mileage;
+    private String mileage;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "engine_id")
@@ -42,13 +42,16 @@ public class Car {
     @Column(name = "photo")
     private byte[] photo;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.REFRESH, CascadeType.DETACH},
-            fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER)
     @JoinTable(
             name = "history_owners",
             joinColumns = {@JoinColumn(name = "car_id")},
             inverseJoinColumns = {@JoinColumn(name = "driver_id")}
     )
     private Set<Driver> owners = new HashSet<>();
+
+    public void addCarDriver(Driver driver) {
+        owners.add(driver);
+    }
 }

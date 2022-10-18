@@ -6,7 +6,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -28,8 +30,11 @@ public class Post {
     @Column(name = "created")
     private final LocalDateTime created = LocalDateTime.now();
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.REFRESH, CascadeType.DETACH})
+    @Column(name = "updated")
+    private LocalDateTime updated;
+
+    @OneToOne(cascade = CascadeType.ALL,
+            orphanRemoval = true)
     @JoinColumn(name = "car_id")
     private Car car;
 
@@ -38,8 +43,12 @@ public class Post {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "post", fetch = FetchType.EAGER)
+    private List<PriceHistory> priceHistoryList;
+
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.REFRESH, CascadeType.DETACH})
+            CascadeType.REFRESH, CascadeType.DETACH},
+            fetch = FetchType.EAGER)
     @JoinTable(
             name = "participants",
             joinColumns = {@JoinColumn(name = "post_id")},
@@ -47,10 +56,21 @@ public class Post {
     )
     private Set<User> participants;
 
+    public void addPriceHistoryToList(PriceHistory priceHistory) {
+        if (priceHistoryList == null) {
+            priceHistoryList = new ArrayList<>();
+        }
+        priceHistoryList.add(priceHistory);
+    }
+
     public void addParticipantToPost(User user) {
         if (participants == null) {
             participants = new HashSet<>();
         }
         participants.add(user);
+    }
+
+    public void removeParticipantFromPost(User user) {
+        participants.remove(user);
     }
 }

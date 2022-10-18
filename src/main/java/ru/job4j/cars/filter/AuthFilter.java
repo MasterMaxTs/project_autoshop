@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 @Component
 public class AuthFilter implements Filter {
@@ -16,7 +17,11 @@ public class AuthFilter implements Filter {
                                                            "formAddUser",
                                                            "addUser",
                                                            "loginPage",
-                                                           "login");
+                                                           "login",
+                                                           "edit",
+                                                           "last_day",
+                                                           "by_parameters");
+    private static final Pattern PATTERN = Pattern.compile("/postPhoto/.+");
 
     private boolean isEnds(String uri) {
         return URI_SUFFIXES.stream().anyMatch(uri::endsWith);
@@ -29,7 +34,7 @@ public class AuthFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
         String uri = req.getRequestURI();
-        if (isEnds(uri)) {
+        if (isEnds(uri) || PATTERN.matcher(uri).matches()) {
             chain.doFilter(req, res);
             return;
         }

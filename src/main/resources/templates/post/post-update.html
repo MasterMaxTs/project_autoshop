@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+            integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+            crossorigin="anonymous"></script>
+    <script type='text/javascript'>
+        var i=0;
+        function addFields(){
+            i++;
+            newInputField('firstname');
+            newInputField('lastname');
+            newInputDateField('start');
+            newInputDateField('end');
+            container.appendChild(document.createElement('br'));
+        }
+        function newInputField(n){
+            var input = document.createElement('input');
+            input.type = 'text';
+            input.name = n;
+            input.placeholder = n + i;
+            input.required = true;
+            container.appendChild(input);
+            container.appendChild(document.createElement('br'));
+        }
+        function newInputDateField(n){
+            var input = document.createElement('input');
+            input.type = 'date';
+            input.name = n;
+            input.placeholder = n + i;
+            input.required = true;
+            container.appendChild(input);
+            container.appendChild(document.createElement('br'));
+        }
+    </script>
+    <title>Редактировать объявление</title>
+</head>
+<body>
+<div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Car sale</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-item nav-link" th:href="@{/posts}">Все объявления</a>
+                <a class="nav-item nav-link active" th:href="@{/posts/new}">Создать объявление</a>
+                <a class="nav-item nav-link" th:href="@{|/posts/users/${user.id}|}">Мои объявления</a>
+                <a class="nav-item nav-link" th:href="@{/posts/subscriptions}">Избранное</a>
+                <a class="nav-item nav-link" th:href="@{/formAddUser}">Регистрация</a>
+                <a class="nav-item nav-link" th:if="${user.name == 'Гость'}">
+                    <form th:action="@{/loginPage}" method="GET">
+                        <button type="submit" class="btn btn-info"><span th:text="${user.name}"></span> | Войти</button>
+                    </form>
+                </a>
+                <a th:if="${user.name != 'Гость'}">
+                    <a class="nav-item nav-link" th:href="@{/formUpdateUser}">Профиль</a>&nbsp&nbsp
+                    <a class="nav-item nav-link">
+                        <form th:action="@{/logout}" method="GET">
+                            <button type="submit" class="btn btn-success">
+                                <span th:text="${user.name}"></span> | Выйти</button>
+                        </form>
+                    </a>
+                </a>
+            </div>
+        </div>
+    </nav>
+    <br>
+    <div class="card" style="width: 80%">
+        <div class="card-header">
+            Редактировать объявление.
+        </div>
+        <div class="card-body">
+            <form th:action="@{/updatePost}" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="post.id" th:value="${post.id}"/>
+                <fieldset th:with="car=${post.car}">
+                    <legend>Модель</legend>
+                    <label for="brand">Марка</label>
+                    <br>
+                    <input type="hidden" name="brand.id" th:value="${car.brand.id}">
+                    <input type="text" id="brand" th:value="${car.brand.name}" readonly/>
+                    <br><br>
+                    <label for="color">Цвет</label>
+                    <input type="text" name="color" id="color" size="19" th:value="${car.color}" required/>
+                    <br><br>
+                    <label for="model_year">Год выпуска:</label>
+                    <input type="text" name="modelYear" id="model_year" th:value="${car.modelYear}" size="2" readonly/>
+                    <br><br>
+                    <label for="mileage">Пробег, км.</label>
+                    <input type="text" name="mileage" id="mileage" th:value="${car.mileage}" size="3" required/>
+                    <br><br>
+                    <label for="price"><b>Цена</b></label>
+                    <br>
+                    <input type="text" name="price" th:with="list=${post.priceHistoryList}" id="price" size="4"
+                           th:value="${list.get(#lists.size(list)-1).price}" required/>
+                    <br><br>
+                </fieldset>
+                <fieldset>
+                    <legend>Фото</legend>
+                    <label for="photo">Загрузить (максимальный размер 1Мб)</label>
+                    <br>
+                    <input type="file" name="file" id="photo" required/>
+                    <br><br>
+                </fieldset>
+                <fieldset th:with="engine=${post.car.engine}">
+                    <legend>Двигатель</legend>
+                    <label for="name">Название</label>
+                    <input type="text" name="name" id="name" th:value="${engine.name}" size="5"/>
+                    <br><br>
+                    <label for="trans">Тип коробки передач</label>
+                    <input type="text" name="transmission" id="trans" th:value="${engine.transmission}" readonly/>
+                    <br><br>
+                    <label for="drive">Тип привода</label>
+                    <input type="text" name="driveUnit" id="drive" th:value="${engine.driveUnit}" readonly/>
+                    <br><br>
+                    <label for="volume">Объём, л.</label>
+                    <input type="text" name="volume" id="volume" th:value="${engine.volume}" readonly/>
+                    <br><br>
+                    <label for="power">Мощность, лс.</label>
+                    <input type="text" name="power" id="power" th:value="${engine.power}" size="2" required/>
+                    <br><br>
+                </fieldset>
+                <fieldset>
+                    <legend>Владельцы по ПТС</legend><br>
+                    <div id="container"> Владелец:<br><br>
+                        <label>Имя
+                            <input name="firstname" placeholder="Введите имя" required/>
+                        </label>
+                        <br>
+                        <label>Фамилия
+                            <input name="lastname" placeholder="Введите фамилию" required/>
+                        </label>
+                        <br>
+                        <label>Начало владения
+                            <input type="date" name="start" placeholder="Начало" required/>
+                        </label>
+                        <br>
+                        <label>Конец владения
+                            <input type="date" name="end" placeholder="Конец" required/>
+                        </label>
+                        <br><br>
+                    </div>
+                    <button onclick="addFields()">Добавить владельца</button>
+                    <br><br>
+                </fieldset>
+                <fieldset>
+                    <legend>Описание объявления</legend>
+                    <label for="desc"></label>
+                    <textarea style="height: 150px; width: 500px"
+                              id="desc" name="text" th:text="${post.text}" required></textarea>
+                </fieldset>
+                <br><br>
+                <button type="submit" class="btn btn-warning">Редактировать</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

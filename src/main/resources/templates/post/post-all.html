@@ -18,7 +18,7 @@
             integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <title>Все задания</title>
+    <title>Все объявления</title>
 </head>
 <body>
 <div class="container">
@@ -30,17 +30,18 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                <a class="nav-item nav-link active" th:href="@{/posts}"><b>Все объявления</b></a>
-                <a class="nav-item nav-link" th:href="@{|/posts/user/${user.id}|}">Мои объявления</a>
+                <a class="nav-item nav-link active" th:href="@{/posts}">Все объявления</a>
                 <a class="nav-item nav-link" th:href="@{/posts/new}">Создать объявление</a>
-                <a class="nav-item nav-link" th:href="@{/formAddUser}">Зарегистрироваться</a>
+                <a class="nav-item nav-link" th:href="@{|/posts/users/${user.id}|}">Мои объявления</a>
+                <a class="nav-item nav-link" th:href="@{/posts/subscriptions}">Избранное</a>
+                <a class="nav-item nav-link" th:href="@{/formAddUser}">Регистрация</a>
                 <a class="nav-item nav-link" th:if="${user.name == 'Гость'}">
                     <form th:action="@{/loginPage}" method="GET">
                         <button type="submit" class="btn btn-info"><span th:text="${user.name}"></span> | Войти</button>
                     </form>
                 </a>
                 <a th:if="${user.name != 'Гость'}">
-                    <a class="nav-item nav-link" th:href="@{/formUpdateUser}">Редактировать</a>&nbsp&nbsp
+                    <a class="nav-item nav-link" th:href="@{/formUpdateUser}">Профиль</a>&nbsp&nbsp
                     <a class="nav-item nav-link">
                         <form th:action="@{/logout}" method="GET">
                             <button type="submit" class="btn btn-success">
@@ -51,22 +52,106 @@
             </div>
         </div>
     </nav>
+    <br>
+    <div>
+        <div style="float: right; border: dimgrey dotted 2px">
+            <h7><em>Фильтровать объявления за сутки</em></h7>
+            <br><br>
+            <div style="float: right">
+                <form th:action="@{/posts/filter/last_day}" method="GET">
+                    <button type="submit" class="btn btn-success">Фильтр</button>
+                </form>
+            </div>
+        </div>
+        <div style="float: left; border: dimgrey dotted 2px">
+            <h7><em>Фильтровать объявления по параметрам</em></h7>
+            <br><br>
+            <form th:action="@{/posts/filter/by_parameters}" method="GET">
+                <label for="brand">Марка</label>
+                <input type="text" size="17" th:if="${filter1}" th:value="${'Фильтр: ' + fBrand}" disabled/>
+                <select name="p" id="brand" required>
+                    <option th:each="brand : ${brands}" th:text="${brand.name}" th:value="${brand.name}"></option>
+                </select>
+                <br>
+                <label for="model.year">Год выпуска (не ранее)</label>
+                <input type="text" size="8" th:if="${filter1}" th:value="${'Фильтр: ' + fModelYear}" disabled/>
+                <input type="text" name="p" id="model.year" size="2" required/>
+                <br>
+                <label for="mileage">Пробег, км. (не больше)</label>
+                <input type="text" size="10" th:if="${filter1}" th:value="${'Фильтр: ' + fMileage}" disabled/>
+                <input type="text" name="p" id="mileage" size="3" required/>
+                <br>
+                <label for="transmission">Тип коробки передач</label>
+                <input th:if="${filter1}" th:value="${'Фильтр: ' + fTransmission}" size="8" disabled/>
+                <select name="p" id="transmission">
+                    <option value="MT">MT (механическая) </option>
+                    <option value="AT">AT (автоматическая)</option>
+                    <option value="AMT">AMT (робот)</option>
+                    <option value="CVT">CVT (вариатор)</option>
+                </select>
+                <br>
+                <label for="volume">Объём двигателя</label>
+                <input th:if="${filter1}" th:value="${'Фильтр: ' + fVolume}" size="7" disabled/>
+                <select name="p" id="volume">
+                    <option value="1.2">1.2</option>
+                    <option value="1.4">1.4</option>
+                    <option value="1.5">1.5</option>
+                    <option value="1.6">1.6</option>
+                    <option value="2.0">2.0</option>
+                    <option value="2.2">2.2</option>
+                    <option value="2.4">2.4</option>
+                    <option value="3.0">3.0</option>
+                    <option value="3.5">3.5</option>
+                    <option value="4.0">4.0</option>
+                </select>
+                <br>
+                <button type="submit" class="btn btn-success" style="float: right">Фильтр</button>
+            </form>
+        </div>
+    </div>
     <table class="table table-striped">
-        <caption style="caption-side: top; text-align: right">Все объявления</caption>
+        <caption th:text="${filter1} or ${filter2} ? ${msg} : 'Все объявления'" style="caption-side: top; text-align: right"></caption>
         <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Фото</th>
-            <th scope="col">Описание</th>
-        </tr>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Фото</th>
+                <th scope="col">Описание</th>
+                <th scope="col">Цена,р.</th>
+            </tr>
         </thead>
         <tbody>
         <tr th:each="post: ${posts}">
-            <td></td>
-            <td></td>
+            <td th:with="doFavorites=${#sets.contains(post.getParticipants(), user)}">
+                <span th:text="${post.id}"></span>
+                <i th:if="${post.user.name == user.name}" class="fa fa-user" aria-hidden="true" title="Собственное объявление"></i>
+                <i th:if="${doFavorites}" class="fa fa-star" aria-hidden="true" title="В избранном"></i>
+            </td>
+            <td>
+                <img th:src="@{|/postPhoto/${post.id}|}" alt="No_photo" width="150"/>
+            </td>
+            <td th:with="car=${post.car}" style="color: gray">
+                <div th:with="engine=${car.engine}" style="float: left; font-weight: bold; color: dimgrey">
+                    <p th:text="${car.brand.name + '. ' + car.modelYear
+                + 'г.  ' + engine.volume + engine.transmission + ' (' + engine.power + ' лс.)'}" ></p>
+                </div>
+                <div style="float: left ;width:800px; overflow: clip; font-weight: normal">
+                    <p th:text="${post.text}"></p>
+                    <a th:href="@{|/posts/${post.id}/edit|}" th:text="${'Читать подробнее...'}"></a>
+                </div>
+                <div style="float: right; font-weight: normal">
+                    <p>
+                        <span th:text="${'Опубликовано: ' + post.created}" style="font-size: small"></span>
+                        <br>
+                        <span th:text="${'Обновлено: ' + post.updated}" style="font-size: 10px"></span>
+                    </p>
+                </div>
+            </td>
+            <td th:with="list=${post.priceHistoryList}" th:text="${list.get(#lists.size(list)-1).price}"></td>
         </tr>
         </tbody>
     </table>
+    <button type="button" class="btn btn-primary" onclick="window.location.href='/posts'" style="float: right">Все объявления</button>
+    <br>
 </div>
 </body>
 </html>

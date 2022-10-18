@@ -1,1 +1,1 @@
-ALTER TABLE auto_engines ADD COLUMN volume FLOAT NOT NULL;
+ALTER TABLE auto_engines ADD COLUMN volume CHAR(3);

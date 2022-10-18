@@ -23,7 +23,13 @@ public class Engine {
     private String name;
 
     @Column(name = "volume")
-    private double volume;
+    private String volume;
+
+    @Column(name = "transmission")
+    private String transmission;
+
+    @Column(name = "drive_unit")
+    private String driveUnit;
 
     @Column(name = "power")
     private int power;

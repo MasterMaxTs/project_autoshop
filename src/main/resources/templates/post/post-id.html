@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+            integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .radius {
+            background: #f0f0f0;
+            border: 1px solid black;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        .position {
+            width: 300px;
+            margin: 7px;
+            padding: 10px;
+        }
+    </style>
+    <title th:text="${'Объявление №' + post.id}"></title>
+</head>
+<body>
+<div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Car sale</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-item nav-link" th:href="@{/posts}">Все объявления</a>
+                <a class="nav-item nav-link" th:href="@{/posts/new}">Создать объявление</a>
+                <a class="nav-item nav-link" th:href="@{|/posts/users/${user.id}|}">Мои объявления</a>
+                <a class="nav-item nav-link" th:href="@{/posts/subscriptions}">Избранное</a>
+                <a class="nav-item nav-link" th:href="@{/formAddUser}">Регистрация</a>
+                <a class="nav-item nav-link" th:if="${user.name == 'Гость'}">
+                    <form th:action="@{/loginPage}" method="GET">
+                        <button type="submit" class="btn btn-info"><span th:text="${user.name}"></span> | Войти</button>
+                    </form>
+                </a>
+                <a th:if="${user.name != 'Гость'}">
+                    <a class="nav-item nav-link" th:href="@{/formUpdateUser}">Профиль</a>&nbsp&nbsp
+                    <a class="nav-item nav-link">
+                        <form th:action="@{/logout}" method="GET">
+                            <button type="submit" class="btn btn-success">
+                                <span th:text="${user.name}"></span> | Выйти</button>
+                        </form>
+                    </a>
+                </a>
+            </div>
+        </div>
+    </nav>
+    <br>
+    <div th:with="doFavorites=${#sets.contains(post.getParticipants(), user)}">
+        <table class="table table-bordered">
+            <caption style="caption-side: top">
+                <div style="float: right">
+                    <div>
+                        <span th:text="${'Объявление №' + post.id}"></span>
+                        <br>
+                    </div>
+                    <div style="font-weight: normal; color: grey">
+                        <span th:text="${'Опубликовано: ' + post.created}" style="font-size: small"></span>
+                        <br>
+                        <span th:text="${'Обновлено: ' + post.updated}" style="font-size: 10px"></span>
+                    </div>
+                </div>
+            </caption>
+            <tbody>
+            <tr>
+                <td th:with="isCurrentUser=${post.user.name == user.name}">
+                    <img th:src="@{|/postPhoto/${post.id}|}" alt="No_photo" width="400" height="250"/>
+                    <div th:if="${doFavorites}">
+                        <div style="float: left">
+                            <button type="button" class="btn btn-secondary" style="float: left">В избранном</button>
+                        </div>
+                        <div style="float: right">
+                            <form th:action="@{|/posts/subscription/${post.id}/remove|}" method="GET">
+                                <input type="hidden" name="post.id" th:value="${post.id}"/>
+                                <button type="submit" class="btn btn-warning" style="float: right">Удалить из избранного</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div th:if="${!doFavorites} AND ${!isCurrentUser}">
+                        <div style="float: left">
+                            <form  th:action="@{|/posts/subs/${post.id}|}" method="GET">
+                                <button th:if="${!doFavorites}" type="submit" class="btn btn-success">В избранное</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div th:if="${isCurrentUser}">
+                        <div style="float: left">
+                            <form th:action="@{|/posts/${post.id}/update|}" method="GET">
+                                <button type="submit" class="btn btn-warning">Редактировать</button>
+                            </form>
+                        </div>
+                        <div style="float: right">
+                            <form th:action="@{|/posts/${post.id}/delete|}" method="GET">
+                                <button type="submit" class="btn btn-danger">Удалить</button>
+                            </form>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <p th:text="${post.text}" style="width:650px; overflow: clip; color: gray; font-weight: normal"></p>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <form th:action="@{|/posts/contacts/${post.id}|}" method="GET" style="float: right">
+            <button type="submit" class="btn btn-info">Позвонить</button>
+        </form>
+        <div style="border-radius: 40px 10px; text-align: center" class="card-header position radius"  th:if="${param.contact != null}">
+            <h5>Контактная информация</h5>
+            <p th:text="${'Имя: ' + post.user.name}"></p>
+            <p th:text="${'Телефон: ' + post.user.phone}"></p>
+            <p th:text="${'Email: ' + post.user.email}"></p>
+        </div>
+        <table class="table table-bordered">
+            <caption style="caption-side: top; text-align: right"><b>Параметры</b></caption>
+            <thead>
+                <tr class="table-warning">
+                    <th scope="col">Машина</th>
+                    <th scope="col">Двигатель</th>
+                    <th scope="col">Цена, руб.</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <table class="table table-bordered">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">Марка</th>
+                                    <th scope="col">Цвет</th>
+                                    <th scope="col">Год</th>
+                                    <th scope="col">Пробег</th>
+                                    <th scope="col">Владельцы</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:with="car=${post.car}">
+                                    <td th:text="${car.brand.name}"></td>
+                                    <td th:text="${car.color}"></td>
+                                    <td th:text="${car.modelYear}"></td>
+                                    <td th:text="${car.mileage}"></td>
+                                    <td th:text="${#sets.size(car.owners)}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div style="float: right">
+                            <form th:action="@{|/posts/${post.id}/ownership-history|}" method="GET">
+                                <button type="submit" class="btn btn-light">История</button>
+                            </form>
+                        </div>
+                    </td>
+                    <td>
+                        <table class="table table-bordered">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">Название</th>
+                                    <th scope="col">Объём</th>
+                                    <th scope="col">Мощность</th>
+                                    <th scope="col">Коробка</th>
+                                    <th scope="col">Привод</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:with="engine=${post.car.engine}">
+                                    <td th:text="${engine.name}"></td>
+                                    <td th:text="${engine.volume}"></td>
+                                    <td th:text="${engine.power}"></td>
+                                    <td th:text="${engine.transmission}"></td>
+                                    <td th:text="${engine.driveUnit}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td th:with="isCurrentUser=${post.user.name == user.name}">
+                        <p th:with="list=${post.priceHistoryList}" th:text="${list.get(#lists.size(list)-1).price}"></p>
+                        <br>
+                        <div th:if="${isCurrentUser}" style="float: right">
+                            <form th:action="@{|/posts/${post.id}/price-history|}" method="GET">
+                                <button type="submit" class="btn btn-light">Динамика</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table th:if="${param.ownership_history != null}" class="table table-bordered" style="width:30%; float: right">
+            <caption style="caption-side: top; text-align: right"><b>История владений</b></caption>
+            <thead>
+            <tr class="table-info">
+                <th scope="col">#</th>
+                <th scope="col">Дата начала</th>
+                <th scope="col">Дата окончания</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="owner,iterStat :${post.car.owners}">
+                <td th:text="${iterStat.count}"></td>
+                <td th:text="${owner.ownershipStartTime}"></td>
+                <td th:text="${owner.ownershipEndTime}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

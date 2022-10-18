@@ -5,8 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "price_history")
@@ -21,17 +20,13 @@ public class PriceHistory {
     @EqualsAndHashCode.Include
     private int id;
 
-    @Column(name = "before")
-    private int before;
-
-    @Column(name = "after")
-    private int after;
+    @Column(name = "price")
+    private int price;
 
     @Column(name = "created")
-    private Timestamp created;
+    private LocalDateTime created = LocalDateTime.now();
 
-    @OneToMany(cascade = CascadeType.ALL,
-            orphanRemoval = true)
-    @JoinColumn(name = "price_history_id")
-    private List<Post> posts;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "post_id")
+    private Post post;
 }

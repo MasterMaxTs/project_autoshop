@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+<html lang="en">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -18,7 +18,7 @@
             integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <title>Все задания</title>
+    <title>Избранное</title>
 </head>
 <body>
 <div class="container">
@@ -30,11 +30,11 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                <a class="nav-item nav-link" th:href="@{/posts}">Все объявления</a>
+                <a class="nav-item nav-link active" th:href="@{/posts}">Все объявления</a>
                 <a class="nav-item nav-link" th:href="@{/posts/new}">Создать объявление</a>
                 <a class="nav-item nav-link" th:href="@{|/posts/users/${user.id}|}">Мои объявления</a>
                 <a class="nav-item nav-link" th:href="@{/posts/subscriptions}">Избранное</a>
-                <a class="nav-item nav-link active" th:href="@{/formAddUser}">Регистрация</a>
+                <a class="nav-item nav-link" th:href="@{/formAddUser}">Регистрация</a>
                 <a class="nav-item nav-link" th:if="${user.name == 'Гость'}">
                     <form th:action="@{/loginPage}" method="GET">
                         <button type="submit" class="btn btn-info"><span th:text="${user.name}"></span> | Войти</button>
@@ -52,12 +52,47 @@
             </div>
         </div>
     </nav>
-    <div class="card-body">
-        <p> Уважаемый, <span th:text="${user.name}"></span>, Вы успешно зарегистрировались в системе!</p><br>
-        <form th:action="@{/posts}" method="GET">
-            <button type="submit" class="btn btn-primary">К объявлениям</button>
-        </form>
-    </div>
+    <table class="table table-striped">
+        <caption style="caption-side: top; text-align: right">Отобранные объявления</caption>
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Фото</th>
+                <th scope="col">Описание</th>
+                <th scope="col">Цена,р.</th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr th:each="post: ${subs}">
+            <td>
+                <span th:text="${post.id}"></span>
+            </td>
+            <td>
+                <img th:src="@{|/postPhoto/${post.id}|}" alt="No_photo" width="150"/>
+            </td>
+            <td th:with="car=${post.car}" style="color: gray">
+                <div th:with="engine=${car.engine}" style="float: left; font-weight: bold; color: dimgrey">
+                    <p th:text="${car.brand.name + '. ' + car.modelYear
+                + 'г.  ' + engine.volume + engine.transmission + ' (' + engine.power + ' лс.)'}" ></p>
+                </div>
+                <div style="float: left ;width:800px; overflow: clip; font-weight: normal">
+                    <p th:text="${post.text}"></p>
+                    <a th:href="@{|/posts/${post.id}/edit|}" th:text="${'Читать подробнее...'}"></a>
+                </div>
+                <div style="float: right; font-weight: normal">
+                    <p>
+                        <span th:text="${'Опубликовано: ' + post.created}" style="font-size: small"></span>
+                        <br>
+                        <span th:text="${'Обновлено: ' + post.updated}" style="font-size: 10px"></span>
+                    </p>
+                </div>
+            </td>
+            <td th:with="list=${post.priceHistoryList}" th:text="${list.get(#lists.size(list)-1).price}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <button type="button" class="btn btn-primary" onclick="window.location.href='/posts'" style="float: right">Все объявления</button>
+    <br>
 </div>
 </body>
 </html>

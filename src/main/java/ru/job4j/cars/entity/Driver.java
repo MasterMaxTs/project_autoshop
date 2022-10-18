@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Calendar;
+import java.util.Date;
 
 @Entity
 @Table(name = "auto_drivers")
@@ -28,9 +28,14 @@ public class Driver {
 
     @Column(name = "ownership_start")
     @Temporal(TemporalType.DATE)
-    private Calendar ownershipStartTime;
+    private Date ownershipStartTime;
 
     @Column(name = "ownership_end")
     @Temporal(TemporalType.DATE)
-    private Calendar ownershipEndTime;
+    private Date ownershipEndTime;
+
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.REFRESH, CascadeType.DETACH})
+    @JoinColumn(name = "user_id")
+    private User user;
 }

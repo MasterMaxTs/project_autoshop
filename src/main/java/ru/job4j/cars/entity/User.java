@@ -37,4 +37,12 @@ public class User {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Set<Post> posts;
+
+    public User(String name, String phone, String email, String login, String password) {
+        this.name = name;
+        this.phone = phone;
+        this.email = email;
+        this.login = login;
+        this.password = password;
+    }
 }

@@ -42,6 +42,11 @@ public class PostServiceImpl implements PostService, PostFilter {
     }
 
     @Override
+    public void deleteAll() {
+        store.deleteAll();
+    }
+
+    @Override
     public Optional<Post> findById(int id) {
         return store.findById(id);
     }
@@ -52,22 +57,23 @@ public class PostServiceImpl implements PostService, PostFilter {
     }
 
     @Override
-    public List<Post> findAllForCarBrand(String brand) {
-        return storeFilter.findAllForCarBrand(brand);
+    public List<Post> findAllByCarBrandAndPrice(String brand,
+                                                int minPrice, int maxPrice) {
+        return storeFilter.findAllByCarBrandAndPrice(brand, minPrice, maxPrice);
     }
 
     @Override
-    public List<Post> findAllBy(String brand,
-                                String modelYear,
-                                String mileage,
-                                String transmission,
-                                String volume) {
-        return storeFilter.findAllBy(brand, modelYear, mileage,
-                                     transmission, volume);
-    }
-
-    @Override
-    public List<Post> findAllByPrice(int minPrice, int maxPrice) {
-        return storeFilter.findAllByPrice(minPrice, maxPrice);
+    public List<Post> findAllByParameters(String brand,
+                                          String bodyType,
+                                          String modelYear,
+                                          String mileage,
+                                          String transmission,
+                                          String volume) {
+        return storeFilter.findAllByParameters(brand,
+                                               bodyType,
+                                               modelYear,
+                                               mileage,
+                                               transmission,
+                                               volume);
     }
 }

@@ -37,6 +37,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public void deleteAll() {
+        crudRepository.run("delete from User", Map.of());
+    }
+
+    @Override
     public Optional<User> findById(int id) {
         return crudRepository.optional(
                 "from User where id = :fId",

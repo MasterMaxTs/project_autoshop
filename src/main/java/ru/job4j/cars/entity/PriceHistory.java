@@ -29,4 +29,9 @@ public class PriceHistory {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
     private Post post;
+
+    public PriceHistory(int price, LocalDateTime created) {
+        this.price = price;
+        this.created = created;
+    }
 }

@@ -32,7 +32,7 @@
             padding: 10px;
         }
     </style>
-    <title>Избранное</title>
+    <title>Архив объявлений</title>
 </head>
 <body>
 <div class="container">
@@ -47,8 +47,8 @@
                 <a class="nav-item nav-link" th:href="@{/posts}">Все объявления</a>
                 <a class="nav-item nav-link" th:href="@{/posts/new}">Создать объявление</a>
                 <a class="nav-item nav-link" th:href="@{|/posts/users/${user.id}|}">Мои объявления</a>
-                <a class="nav-item nav-link active" th:href="@{/posts/subscriptions}">Избранное</a>
-                <a class="nav-item nav-link" th:href="@{/posts/archive}">Архив</a>
+                <a class="nav-item nav-link" th:href="@{/posts/subscriptions}">Избранное</a>
+                <a class="nav-item nav-link active" th:href="@{/posts/archive}">Архив</a>
                 <a class="nav-item nav-link" th:href="@{/formAddUser}">Регистрация</a>
                 <a class="nav-item nav-link" th:if="${user.name == 'Гость'}">
                     <form th:action="@{/loginPage}" method="GET">
@@ -167,28 +167,30 @@
     </div>
     <a name="anchor"></a>
     <table class="table table-striped">
-        <caption style="caption-side: top; text-align: right; font-weight: bold">Отобранные объявления</caption>
+        <caption style="caption-side: top; text-align: right; font-weight: bold">Все архивные объявления</caption>
         <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Фото</th>
-                <th scope="col">Описание</th>
-                <th scope="col">Цена,р.</th>
-            </tr>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Фото</th>
+            <th scope="col">Описание</th>
+            <th scope="col">Цена,р.</th>
+        </tr>
         </thead>
         <tbody>
-        <tr th:each="post: ${subs}">
-            <td>
+        <tr th:each="post: ${posts}">
+            <td th:with="doFavorites=${#sets.contains(post.getParticipants(), user)}">
                 <span th:text="${post.id}"></span>
-                <i th:if="${post.isSold}" class="fa fa-handshake-o" aria-hidden="true" title="Продано" style="color: indianred"></i>
+                <i th:if="${post.user.name == user.name}" class="fa fa-user" aria-hidden="true" title="Собственное объявление"></i>
+                <i th:if="${doFavorites}" class="fa fa-star" aria-hidden="true" title="В избранном"></i>
+                <i class="fa fa-handshake-o" aria-hidden="true" title="Продано" style="color: indianred"></i>
             </td>
             <td>
                 <img th:src="@{|/postPhoto/${post.id}|}" alt="No_photo" width="150"/>
-                <p th:text="${post.isSold ? 'Продано': 'Продаётся'}" style="float: left; font-size: 12px; font-weight: bold; color: dimgray" ></p>
-                <div th:if="${post.isSold}" style="float: right">
-                    <form th:action="@{|/posts/subscription/${post.id}/remove|}" method="GET">
+                <p style="float: left; font-size: 12px; font-weight: bold; color: dimgray" >Продано</p>
+                <div th:if="${user.login == 'admin'}" style="float: right">
+                    <form th:action="@{|/posts/${post.id}/delete_by_admin|}" method="GET">
                         <input type="hidden" name="post.id" th:value="${post.id}"/>
-                        <button type="submit" class="btn btn-warning" title="Удалить из избранного" style="float: right">Удалить</button>
+                        <button type="submit" class="btn btn-danger" title="Удалить из БД" style="float: right">Удалить</button>
                     </form>
                 </div>
             </td>
@@ -199,14 +201,12 @@
                 </div>
                 <div style="float: left ;width:800px; overflow: clip; font-weight: normal">
                     <p th:text="${post.text}"></p>
-                    <a th:unless="${post.isSold}" th:href="@{|/posts/${post.id}/edit|}" th:text="${'Читать подробнее...'}"></a>
                 </div>
                 <div style="float: right; font-weight: normal">
                     <p>
                         <span th:text="${'Опубликовано: ' + post.created}" style="font-size: small"></span>
                         <br>
-                        <span th:unless="${post.isSold}" th:text="${'Обновлено: ' + post.updated}" style="font-size: 10px"></span>
-                        <span th:if="${post.isSold}" th:text="${'Продано: ' + post.saled}" style="font-size: 10px"></span>
+                        <span th:text="${'Продано: ' + post.saled}" style="font-size: 10px"></span>
                     </p>
                 </div>
             </td>
@@ -214,6 +214,11 @@
         </tr>
         </tbody>
     </table>
+    <div th:if="${user.login == 'admin'}" style="float: left">
+        <form th:action="@{|/posts/archive/delete/all|}" method="GET">
+            <button type="submit" class="btn btn-danger" title="Удалить всё из БД">Очистить БД</button>
+        </form>
+    </div>
     <button type="button" class="btn btn-primary" onclick="window.location.href='#anchor'" style="float: right">К началу</button>
     <br><br>
 </div>

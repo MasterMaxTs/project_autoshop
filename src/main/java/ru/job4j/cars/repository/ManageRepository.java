@@ -13,5 +13,7 @@ public interface ManageRepository<T> {
 
     void delete(T model);
 
+    void deleteAll();
+
     Optional<T> findById(int id);
 }

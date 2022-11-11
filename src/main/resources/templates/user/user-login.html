@@ -34,6 +34,7 @@
                 <a class="nav-item nav-link" th:href="@{/posts/new}">Создать объявление</a>
                 <a class="nav-item nav-link" th:href="@{|/posts/users/${user.id}|}">Мои объявления</a>
                 <a class="nav-item nav-link" th:href="@{/posts/subscriptions}">Избранное</a>
+                <a class="nav-item nav-link" th:href="@{/posts/archive}">Архив</a>
                 <a class="nav-item nav-link" th:href="@{/formAddUser}">Регистрация</a>
                     <form th:action="@{/loginPage}" method="GET">
                         <button type="submit" class="btn btn-info"><span th:text="${user.name}"></span> | Войти</button>

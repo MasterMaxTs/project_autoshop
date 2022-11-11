@@ -37,6 +37,11 @@ public class CarRepositoryImpl implements CarRepository {
     }
 
     @Override
+    public void deleteAll() {
+        crudRepository.run("delete from Car", Map.of());
+    }
+
+    @Override
     public Optional<Car> findById(int id) {
         return crudRepository.optional(
                 "from Car where id = :fId",

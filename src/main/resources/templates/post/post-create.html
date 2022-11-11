@@ -71,6 +71,7 @@
                 <a class="nav-item nav-link active" th:href="@{/posts/new}">Создать объявление</a>
                 <a class="nav-item nav-link" th:href="@{|/posts/users/${user.id}|}">Мои объявления</a>
                 <a class="nav-item nav-link" th:href="@{/posts/subscriptions}">Избранное</a>
+                <a class="nav-item nav-link" th:href="@{/posts/archive}">Архив</a>
                 <a class="nav-item nav-link" th:href="@{/formAddUser}">Регистрация</a>
                 <a class="nav-item nav-link" th:if="${user.name == 'Гость'}">
                     <form th:action="@{/loginPage}" method="GET">
@@ -98,7 +99,7 @@
             <form th:action="@{/addPost}" method="POST" enctype="multipart/form-data" th:object="${post}">
                 <fieldset>
                     <legend>Модель</legend>
-                        <label for="brand">Марка</label>
+                        <label for="brand">Марка:</label>
                         <select name="brand.id" id="brand" required>
                             <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
                         </select>
@@ -106,7 +107,20 @@
                         <label for="color">Цвет</label>
                         <input type="text" name="color" id="color" size="19" required/>
                         <br><br>
-                        <label for="model_year">Год выпуска:</label>
+                        <label for="body_type">Тип кузова:</label>
+                        <select name="bodyType" id="body_type" required>
+                            <option value="Sedan" selected> Седан       </option>
+                            <option value="Wagon"         > Универсал   </option>
+                            <option value="Hatchback"     > Хэтчбек     </option>
+                            <option value="Liftback"      > Лифтбек     </option>
+                            <option value="Coupe"         > Купе        </option>
+                            <option value="Limousine"     > Лимузин     </option>
+                            <option value="Cabriolet"     > Кабриолет   </option>
+                            <option value="SUV"           > Внедорожник </option>
+                            <option value="SuperCar"      > Спорткар    </option>
+                        </select>
+                        <br><br>
+                        <label for="model_year">Год выпуска</label>
                         <input type="text" name="modelYear" id="model_year" size="2" required/>
                         <br><br>
                         <label for="mileage">Пробег, км.</label>
@@ -114,7 +128,7 @@
                         <br><br>
                         <label for="price"><b>Цена</b></label>
                         <br>
-                        <input type="text" name="price" id="price" size="4" required/>
+                        <input type="text" name="price" id="price" size="5" required/>
                         <br><br>
                 </fieldset>
                 <fieldset>
@@ -132,37 +146,40 @@
                         <label for="trans">Тип коробки передач</label>
                         <table id="trans">
                             <tr>
-                                <td class="trans-cell-scale"><input type="radio" name = "transmission" value="MT"/>MT</td>
-                                <td class="trans-cell-scale"><input type="radio" name = "transmission" value="AT" checked/>AT</td>
-                                <td class="trans-cell-scale"><input type="radio" name = "transmission" value="AMT"/>АMT</td>
-                                <td class="trans-cell-scale"><input type="radio" name = "transmission" value="CVT"/>CVT</td>
+                                <td class="trans-cell-scale"><input type="radio" name = "transmission" value="MT"        /> MT  </td>
+                                <td class="trans-cell-scale"><input type="radio" name = "transmission" value="AT" checked/> AT  </td>
+                                <td class="trans-cell-scale"><input type="radio" name = "transmission" value="AMT"       /> АMT </td>
+                                <td class="trans-cell-scale"><input type="radio" name = "transmission" value="CVT"       /> CVT </td>
                             </tr>
                         </table>
                         <br><br>
                         <label for="drive">Тип привода</label>
                         <table id="drive">
                             <tr>
-                                <td class="trans-cell-scale"><input type="radio" name="driveUnit" value="Задний"/>Задний</td>
-                                <td class="trans-cell-scale"><input type="radio" name="driveUnit" value="Передний" checked/>Передний</td>
-                                <td class="trans-cell-scale"><input type="radio" name="driveUnit" value="Полный"/>Полный</td>
+                                <td class="trans-cell-scale"><input type="radio" name="driveUnit" value="Задний"          /> Задний   </td>
+                                <td class="trans-cell-scale"><input type="radio" name="driveUnit" value="Передний" checked/> Передний </td>
+                                <td class="trans-cell-scale"><input type="radio" name="driveUnit" value="Полный"          /> Полный   </td>
                             </tr>
                         </table>
                         <br><br>
                         <label for="volume">Объём, л.</label>
                         <table id="volume">
                             <tr>
-                                <td class="volume-cell-scale"><input type="radio" name="volume" value="1.2"/>1.2</td>
-                                <td class="volume-cell-scale"><input type="radio" name="volume" value="1.3"/>1.3</td>
-                                <td class="volume-cell-scale"><input type="radio" name="volume" value="1.4"/>1.4</td>
-                                <td class="volume-cell-scale"><input type="radio" name="volume" value="1.5"/>1.5</td>
-                                <td class="volume-cell-scale"><input type="radio" name="volume" value="1.6" checked/>1.6</td>
-                                <td class="volume-cell-scale"><input type="radio" name="volume" value="2.0"/>2.0</td>
-                                <td class="volume-cell-scale"><input type="radio" name="volume" value="2.2"/>2.2</td>
-                                <td class="volume-cell-scale"><input type="radio" name="volume" value="2.4"/>2.4</td>
-                                <td class="volume-cell-scale"><input type="radio" name="volume" value="2.5"/>2.5</td>
-                                <td class="volume-cell-scale"><input type="radio" name="volume" value="3.0"/>3.0</td>
-                                <td class="volume-cell-scale"><input type="radio" name="volume" value="3.5"/>3.5</td>
-                                <td class="volume-cell-scale"><input type="radio" name="volume" value="4.0"/>4.0</td>
+                                <td class="volume-cell-scale"><input type="radio" name="volume" value="1.2"        /> 1.2 </td>
+                                <td class="volume-cell-scale"><input type="radio" name="volume" value="1.4"        /> 1.4 </td>
+                                <td class="volume-cell-scale"><input type="radio" name="volume" value="1.6" checked/> 1.6 </td>
+                                <td class="volume-cell-scale"><input type="radio" name="volume" value="1.8"        /> 1.8 </td>
+                                <td class="volume-cell-scale"><input type="radio" name="volume" value="2.0"        /> 2.0 </td>
+                                <td class="volume-cell-scale"><input type="radio" name="volume" value="2.2"        /> 2.2 </td>
+                                <td class="volume-cell-scale"><input type="radio" name="volume" value="2.4"        /> 2.4 </td>
+                                <td class="volume-cell-scale"><input type="radio" name="volume" value="2.6"        /> 2.6 </td>
+                                <td class="volume-cell-scale"><input type="radio" name="volume" value="2.8"        /> 2.8 </td>
+                                <td class="volume-cell-scale"><input type="radio" name="volume" value="3.0"        /> 3.0 </td>
+                                <td class="volume-cell-scale"><input type="radio" name="volume" value="3.2"        /> 3.2 </td>
+                                <td class="volume-cell-scale"><input type="radio" name="volume" value="3.4"        /> 3.4 </td>
+                                <td class="volume-cell-scale"><input type="radio" name="volume" value="3.6"        /> 3.6 </td>
+                                <td class="volume-cell-scale"><input type="radio" name="volume" value="3.8"        /> 3.8 </td>
+                                <td class="volume-cell-scale"><input type="radio" name="volume" value="4.0"        /> 4.0 </td>
                             </tr>
                         </table>
                         <br><br>

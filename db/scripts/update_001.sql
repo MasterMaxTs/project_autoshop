@@ -14,5 +14,6 @@ CREATE TABLE IF NOT EXISTS auto_posts
     id      SERIAL PRIMARY KEY,
     text    TEXT NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
+    is_sold BOOLEAN DEFAULT false,
     user_id INT REFERENCES auto_users (id)
 );

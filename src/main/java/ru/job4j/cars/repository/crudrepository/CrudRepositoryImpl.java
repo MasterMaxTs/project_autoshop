@@ -38,8 +38,8 @@ public class CrudRepositoryImpl implements CrudRepository {
     @Override
     public void run(Consumer<Session> command) {
         tx(session -> {
-                    command.accept(session);
-                    return null;
+                       command.accept(session);
+                       return null;
                 }
         );
     }
@@ -47,8 +47,7 @@ public class CrudRepositoryImpl implements CrudRepository {
     @Override
     public void run(String query, Map<String, Object> args) {
         Consumer<Session> command = session -> {
-            var sq = session
-                    .createQuery(query);
+            var sq = session.createQuery(query);
             for (Map.Entry<String, Object> arg : args.entrySet()) {
                 sq.setParameter(arg.getKey(), arg.getValue());
             }
@@ -60,8 +59,8 @@ public class CrudRepositoryImpl implements CrudRepository {
     @Override
     public <T> List<T> query(String query, Class<T> cl) {
         Function<Session, List<T>> command = session -> session
-                .createQuery(query, cl)
-                .list();
+                                                            .createQuery(query, cl)
+                                                            .list();
         return tx(command);
     }
 

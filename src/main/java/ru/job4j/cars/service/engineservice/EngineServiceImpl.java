@@ -35,6 +35,11 @@ public class EngineServiceImpl implements EngineService {
     }
 
     @Override
+    public void deleteAll() {
+        store.deleteAll();
+    }
+
+    @Override
     public Optional<Engine> findById(int id) {
         return store.findById(id);
     }

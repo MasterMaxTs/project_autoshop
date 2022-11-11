@@ -63,6 +63,7 @@
                 <a class="nav-item nav-link active" th:href="@{/posts/new}">Создать объявление</a>
                 <a class="nav-item nav-link" th:href="@{|/posts/users/${user.id}|}">Мои объявления</a>
                 <a class="nav-item nav-link" th:href="@{/posts/subscriptions}">Избранное</a>
+                <a class="nav-item nav-link" th:href="@{/posts/archive}">Архив</a>
                 <a class="nav-item nav-link" th:href="@{/formAddUser}">Регистрация</a>
                 <a class="nav-item nav-link" th:if="${user.name == 'Гость'}">
                     <form th:action="@{/loginPage}" method="GET">
@@ -93,11 +94,15 @@
                     <legend>Модель</legend>
                     <label for="brand">Марка</label>
                     <br>
-                    <input type="hidden" name="brand.id" th:value="${car.brand.id}">
-                    <input type="text" id="brand" th:value="${car.brand.name}" readonly/>
+                    <input type="hidden" name="brand.id" th:value="${car.brand.id}"/>
+                    <input type="hidden" name="car.id" th:value="${car.id}"/>
+                    <input type="text" name="brand.id" id="brand" th:value="${car.brand.name}" size="13" disabled/>
+                    <br><br>
+                    <label for="body_type">Кузов</label>
+                    <input type="text" name="bodyType" id="body_type" th:value="${car.bodyType}" size="13" readonly/>
                     <br><br>
                     <label for="color">Цвет</label>
-                    <input type="text" name="color" id="color" size="19" th:value="${car.color}" required/>
+                    <input type="text" name="color" id="color" th:value="${car.color}" size="19" required/>
                     <br><br>
                     <label for="model_year">Год выпуска:</label>
                     <input type="text" name="modelYear" id="model_year" th:value="${car.modelYear}" size="2" readonly/>
@@ -107,8 +112,8 @@
                     <br><br>
                     <label for="price"><b>Цена</b></label>
                     <br>
-                    <input type="text" name="price" th:with="list=${post.priceHistoryList}" id="price" size="4"
-                           th:value="${list.get(#lists.size(list)-1).price}" required/>
+                    <input type="text" name="price" id="price" th:with="list=${post.priceHistoryList}"
+                           th:value="${list.get(#lists.size(list)-1).price}" size="5" required/>
                     <br><br>
                 </fieldset>
                 <fieldset>
@@ -121,19 +126,20 @@
                 <fieldset th:with="engine=${post.car.engine}">
                     <legend>Двигатель</legend>
                     <label for="name">Название</label>
-                    <input type="text" name="name" id="name" th:value="${engine.name}" size="5"/>
+                    <input type="hidden" name="engine.id" th:value="${engine.id}"/>
+                    <input type="text" name="name" id="name" th:value="${engine.name}" size="4"/>
                     <br><br>
                     <label for="trans">Тип коробки передач</label>
-                    <input type="text" name="transmission" id="trans" th:value="${engine.transmission}" readonly/>
+                    <input type="text" name="transmission" id="trans" th:value="${engine.transmission}" size="2" readonly/>
                     <br><br>
                     <label for="drive">Тип привода</label>
-                    <input type="text" name="driveUnit" id="drive" th:value="${engine.driveUnit}" readonly/>
+                    <input type="text" name="driveUnit" id="drive" th:value="${engine.driveUnit}" size="8" readonly/>
                     <br><br>
                     <label for="volume">Объём, л.</label>
-                    <input type="text" name="volume" id="volume" th:value="${engine.volume}" readonly/>
+                    <input type="text" name="volume" id="volume" th:value="${engine.volume}" size="1" readonly/>
                     <br><br>
                     <label for="power">Мощность, лс.</label>
-                    <input type="text" name="power" id="power" th:value="${engine.power}" size="2" required/>
+                    <input type="text" name="power" id="power" th:value="${engine.power}" size="1" required/>
                     <br><br>
                 </fieldset>
                 <fieldset>

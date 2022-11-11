@@ -18,6 +18,20 @@
             integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .radius {
+            background: ghostwhite;
+            border: 1px solid grey ;
+            border-radius: 10px 10px 10px 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            opacity: 85%;
+        }
+        .position {
+            margin: 7px;
+            padding: 10px;
+        }
+    </style>
     <title>Все объявления</title>
 </head>
 <body>
@@ -34,6 +48,7 @@
                 <a class="nav-item nav-link" th:href="@{/posts/new}">Создать объявление</a>
                 <a class="nav-item nav-link" th:href="@{|/posts/users/${user.id}|}">Мои объявления</a>
                 <a class="nav-item nav-link" th:href="@{/posts/subscriptions}">Избранное</a>
+                <a class="nav-item nav-link" th:href="@{/posts/archive}">Архив</a>
                 <a class="nav-item nav-link" th:href="@{/formAddUser}">Регистрация</a>
                 <a class="nav-item nav-link" th:if="${user.name == 'Гость'}">
                     <form th:action="@{/loginPage}" method="GET">
@@ -54,8 +69,8 @@
     </nav>
     <br>
     <div>
-        <div style="float: right; border: dimgrey dotted 2px">
-            <h7><em>Фильтровать объявления за сутки</em></h7>
+        <div style="text-align: center; float: right; width: 250px" class="position radius">
+            <h7><em>Фильтровать все объявления, опубликованные за сутки</em></h7>
             <br><br>
             <div style="float: right">
                 <form th:action="@{/posts/filter/last_day}" method="GET">
@@ -63,14 +78,50 @@
                 </form>
             </div>
         </div>
-        <div style="float: left; border: dimgrey dotted 2px">
-            <h7><em>Фильтровать объявления по параметрам</em></h7>
+        <div style="text-align: center; float: right; width: 400px" class="position radius">
+            <h7><em>Фильтровать объявления по марке авто и цене</em></h7>
+            <br><br>
+            <form th:action="@{/posts/filter/by_brand_price}" method="GET">
+                <label for="fbrand">Марка</label>
+                <input th:if="${filter3}" type="text" size="17" th:value="${'Фильтр: ' + fBrand}" disabled/>
+                <select name="p" id="fbrand" required>
+                    <option th:each="brand : ${brands}" th:text="${brand.name}" th:value="${brand.name}"></option>
+                </select>
+                <br>
+                <p><u>Диапазон цены, руб.:</u></p>
+                <label for="flprice">Нижняя граница</label>
+                <input th:if="${filter3}" type="text" size="12" th:value="${'Фильтр: ' + fLprice}" disabled/>
+                <input type="text" name="p" id="flprice" size="5" required/>
+                <br>
+                <label for="fuprice">Верхняя граница</label>
+                <input th:if="${filter3}" type="text" size="12" th:value="${'Фильтр: ' + fUprice}" disabled/>
+                <input type="text" name="p" id="fuprice" size="5" required/>
+                <br>
+                <button type="submit" class="btn btn-success" style="float: right">Фильтр</button>
+            </form>
+        </div>
+        <div style="text-align: left; float: left; width: 400px" class="position radius">
+            <h7><em>Фильтровать объявления по параметрам авто</em></h7>
             <br><br>
             <form th:action="@{/posts/filter/by_parameters}" method="GET">
                 <label for="brand">Марка</label>
                 <input type="text" size="17" th:if="${filter1}" th:value="${'Фильтр: ' + fBrand}" disabled/>
                 <select name="p" id="brand" required>
                     <option th:each="brand : ${brands}" th:text="${brand.name}" th:value="${brand.name}"></option>
+                </select>
+                <br>
+                <label for="body_type">Тип кузова:</label>
+                <input th:if="${filter1}" th:value="${'Фильтр: ' + fBodyType}" size="13" disabled/>
+                <select name="p" id="body_type" required>
+                    <option value="Sedan" selected> Седан       </option>
+                    <option value="Wagon"         > Универсал   </option>
+                    <option value="Hatchback"     > Хэтчбек     </option>
+                    <option value="Liftback"      > Лифтбек     </option>
+                    <option value="Coupe"         > Купе        </option>
+                    <option value="Limousine"     > Лимузин     </option>
+                    <option value="Cabriolet"     > Кабриолет   </option>
+                    <option value="SUV"           > Внедорожник </option>
+                    <option value="SuperCar"      > Спорткар    </option>
                 </select>
                 <br>
                 <label for="model.year">Год выпуска (не ранее)</label>
@@ -84,33 +135,40 @@
                 <label for="transmission">Тип коробки передач</label>
                 <input th:if="${filter1}" th:value="${'Фильтр: ' + fTransmission}" size="8" disabled/>
                 <select name="p" id="transmission">
-                    <option value="MT">MT (механическая) </option>
-                    <option value="AT">AT (автоматическая)</option>
-                    <option value="AMT">AMT (робот)</option>
-                    <option value="CVT">CVT (вариатор)</option>
+                    <option value="MT">          MT (механическая)   </option>
+                    <option value="AT" selected> AT (автоматическая) </option>
+                    <option value="AMT"        > AMT (робот)         </option>
+                    <option value="CVT"        > CVT (вариатор)      </option>
                 </select>
-                <br>
-                <label for="volume">Объём двигателя</label>
+                <br><br>
+                <label for="volume">Объём двигателя, л.</label>
                 <input th:if="${filter1}" th:value="${'Фильтр: ' + fVolume}" size="7" disabled/>
                 <select name="p" id="volume">
-                    <option value="1.2">1.2</option>
-                    <option value="1.4">1.4</option>
-                    <option value="1.5">1.5</option>
-                    <option value="1.6">1.6</option>
-                    <option value="2.0">2.0</option>
-                    <option value="2.2">2.2</option>
-                    <option value="2.4">2.4</option>
-                    <option value="3.0">3.0</option>
-                    <option value="3.5">3.5</option>
-                    <option value="4.0">4.0</option>
+                    <option value="1.2"         > 1.2 </option>
+                    <option value="1.4"         > 1.4 </option>
+                    <option value="1.6" selected> 1.6 </option>
+                    <option value="1.8"         > 1.8 </option>
+                    <option value="2.0"         > 2.0 </option>
+                    <option value="2.2"         > 2.2 </option>
+                    <option value="2.4"         > 2.4 </option>
+                    <option value="2.6"         > 2.6 </option>
+                    <option value="2.8"         > 2.8 </option>
+                    <option value="3.0"         > 3.0 </option>
+                    <option value="3.2"         > 3.2 </option>
+                    <option value="3.4"         > 3.4 </option>
+                    <option value="3.6"         > 3.6 </option>
+                    <option value="3.8"         > 3.8 </option>
+                    <option value="4.0"         > 4.0 </option>
                 </select>
                 <br>
                 <button type="submit" class="btn btn-success" style="float: right">Фильтр</button>
             </form>
         </div>
     </div>
+    <a name="anchor"></a>
     <table class="table table-striped">
-        <caption th:text="${filter1} or ${filter2} ? ${msg} : 'Все объявления'" style="caption-side: top; text-align: right"></caption>
+        <caption th:text="${filter1} or ${filter2} or ${filter3} ? ${msg} : 'Все объявления'"
+                 style="caption-side: top; text-align: right; font-weight: bold"></caption>
         <thead>
             <tr>
                 <th scope="col">#</th>
@@ -125,24 +183,27 @@
                 <span th:text="${post.id}"></span>
                 <i th:if="${post.user.name == user.name}" class="fa fa-user" aria-hidden="true" title="Собственное объявление"></i>
                 <i th:if="${doFavorites}" class="fa fa-star" aria-hidden="true" title="В избранном"></i>
+                <i th:if="${post.isSold}" class="fa fa-handshake-o" aria-hidden="true" title="Продано" style="color: indianred"></i>
             </td>
             <td>
                 <img th:src="@{|/postPhoto/${post.id}|}" alt="No_photo" width="150"/>
+                <p th:text="${post.isSold ? 'Продано': 'Продаётся'}" style="float: left; font-size: 12px; font-weight: bold; color: dimgray" ></p>
             </td>
-            <td th:with="car=${post.car}" style="color: gray">
-                <div th:with="engine=${car.engine}" style="float: left; font-weight: bold; color: dimgrey">
-                    <p th:text="${car.brand.name + '. ' + car.modelYear
+            <td th:with="car=${post.car}" style="color: dimgray">
+                <div th:with="engine=${car.engine}" style="float: left; font-weight: bold">
+                    <p th:text="${car.brand.name + '. ' + car.bodyType + '. ' + car.modelYear
                 + 'г.  ' + engine.volume + engine.transmission + ' (' + engine.power + ' лс.)'}" ></p>
                 </div>
                 <div style="float: left ;width:800px; overflow: clip; font-weight: normal">
                     <p th:text="${post.text}"></p>
-                    <a th:href="@{|/posts/${post.id}/edit|}" th:text="${'Читать подробнее...'}"></a>
+                    <a th:unless="${post.isSold}" th:href="@{|/posts/${post.id}/edit|}" th:text="${'Читать подробнее...'}"></a>
                 </div>
                 <div style="float: right; font-weight: normal">
                     <p>
                         <span th:text="${'Опубликовано: ' + post.created}" style="font-size: small"></span>
                         <br>
-                        <span th:text="${'Обновлено: ' + post.updated}" style="font-size: 10px"></span>
+                        <span th:unless="${post.isSold}" th:text="${'Обновлено: ' + post.updated}" style="font-size: 10px"></span>
+                        <span th:if="${post.isSold}" th:text="${'Продано: ' + post.saled}" style="font-size: 10px"></span>
                     </p>
                 </div>
             </td>
@@ -150,8 +211,8 @@
         </tr>
         </tbody>
     </table>
-    <button type="button" class="btn btn-primary" onclick="window.location.href='/posts'" style="float: right">Все объявления</button>
-    <br>
+    <button type="button" class="btn btn-primary" onclick="window.location.href='#anchor'" style="float: right">К началу</button>
+    <br><br>
 </div>
 </body>
 </html>

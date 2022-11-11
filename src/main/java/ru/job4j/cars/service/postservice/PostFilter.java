@@ -8,10 +8,9 @@ public interface PostFilter {
 
     List<Post> findAllForLastDay();
 
-    List<Post> findAllForCarBrand(String brand);
+    List<Post> findAllByParameters(String brand, String bodyType, String modelYear,
+                                   String mileage, String transmission, String volume);
 
-    List<Post> findAllBy(String brand, String modelYear, String mileage,
-                         String transmission, String volume);
-
-    List<Post> findAllByPrice(int minPrice, int maxPrice);
+    List<Post> findAllByCarBrandAndPrice(String brand, int minPrice,
+                                         int maxPrice);
 }

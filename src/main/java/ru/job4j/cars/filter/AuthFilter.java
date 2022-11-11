@@ -20,7 +20,9 @@ public class AuthFilter implements Filter {
                                                            "login",
                                                            "edit",
                                                            "last_day",
-                                                           "by_parameters");
+                                                           "by_parameters",
+                                                           "by_brand_price",
+                                                           "archive");
     private static final Pattern PATTERN = Pattern.compile("/postPhoto/.+");
 
     private boolean isEnds(String uri) {

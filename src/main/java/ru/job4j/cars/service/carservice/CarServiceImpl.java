@@ -35,6 +35,11 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    public void deleteAll() {
+        store.deleteAll();
+    }
+
+    @Override
     public Optional<Car> findById(int id) {
         return store.findById(id);
     }

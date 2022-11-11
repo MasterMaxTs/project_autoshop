@@ -12,22 +12,20 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.job4j.cars.controller.ManageSession;
 import ru.job4j.cars.entity.*;
+import ru.job4j.cars.service.adminservice.AdminPostService;
+import ru.job4j.cars.service.carservice.CarService;
 import ru.job4j.cars.service.carservice.carbrandservice.CarBrandService;
 import ru.job4j.cars.service.driverservice.DriverService;
+import ru.job4j.cars.service.engineservice.EngineService;
 import ru.job4j.cars.service.postservice.PostFilter;
 import ru.job4j.cars.service.postservice.PostService;
-import ru.job4j.cars.service.userservice.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -36,9 +34,11 @@ public class PostController implements ManageSession {
 
     private final PostService postService;
     private final PostFilter postFilter;
+    private final EngineService engineService;
+    private final CarService carService;
     private final CarBrandService carBrandService;
     private final DriverService driverService;
-    private final UserService userService;
+    private final AdminPostService adminPostService;
 
     @ModelAttribute("user")
     User addUserToModels(HttpSession session) {
@@ -52,10 +52,25 @@ public class PostController implements ManageSession {
 
     @GetMapping("/posts")
     public String all(Model model) {
-        model.addAttribute("posts", postService.findAll());
+        List<Post> posts = postService.findAll()
+                                      .stream()
+                                      .filter(p -> !p.isSold())
+                                      .collect(Collectors.toList());
+        model.addAttribute("posts", posts);
         model.addAttribute("brands", carBrandService.findAll());
         model.addAttribute("filter", "false");
         return "post/post-all";
+    }
+
+    @GetMapping("/posts/archive")
+    public String allArchive(Model model) {
+        List<Post> posts = postService.findAll()
+                                      .stream()
+                                      .filter(Post::isSold)
+                                      .collect(Collectors.toList());
+        model.addAttribute("posts", posts);
+        model.addAttribute("brands", carBrandService.findAll());
+        return "/post/post-all-archived";
     }
 
     @GetMapping("/postPhoto/{postId}")
@@ -87,17 +102,10 @@ public class PostController implements ManageSession {
         );
     }
 
-    @GetMapping("/posts/{postId}/by_user/edit")
-    public String showUserPost(@PathVariable("postId") int id, Model model) {
-        Optional<Post> postInDb = postService.findById(id);
-        postInDb.ifPresent(post -> model.addAttribute("post", post));
-        return "/post/post-id-user";
-    }
-
     @GetMapping("posts/{postId}/price-history")
     public String showPriceHistoryByUserPost(@PathVariable("postId") int id) {
         return String.format(
-                "redirect:/posts/%d/by_user/edit?price_history=true", id
+                "redirect:/posts/%d/edit?price_history=true", id
         );
     }
 
@@ -124,7 +132,7 @@ public class PostController implements ManageSession {
                                     post.addParticipantToPost(user);
                                     postService.update(post); }
         );
-        return "redirect:/index";
+        return "redirect:/posts/subscriptions";
     }
 
     @GetMapping("posts/subscription/{postId}/remove")
@@ -148,6 +156,7 @@ public class PostController implements ManageSession {
                                     .filter(p -> p.getParticipants().contains(user))
                                     .collect(Collectors.toList());
         model.addAttribute("subs", subsPosts);
+        model.addAttribute("brands", carBrandService.findAll());
         return "post/post-all-subscriptions";
     }
 
@@ -155,6 +164,7 @@ public class PostController implements ManageSession {
     public String allByUserId(@PathVariable("userId") int id,
                               Model model) {
         model.addAttribute("userPosts", postService.findAllByUserId(id));
+        model.addAttribute("brands", carBrandService.findAll());
         return "post/post-all-by-user";
     }
 
@@ -174,30 +184,58 @@ public class PostController implements ManageSession {
         return "post/post-all";
     }
 
+    @GetMapping("posts/filter/by_brand_price")
+    public String allByCarBrandAndPrice(HttpServletRequest req, Model model) {
+        String[] parameters = req.getParameterValues("p");
+        String brand = parameters[0];
+        String lowerPrice = parameters[1];
+        String upperPrice = parameters[2];
+        String message = "Отфильтрованные объявления по марке авто и цене";
+        Map<String, String> attributes = Map.of(
+                                            "msg", message,
+                                            "fBrand", brand,
+                                            "fLprice", lowerPrice,
+                                            "fUprice", upperPrice);
+        model.addAttribute(
+                "posts",
+                postFilter.findAllByCarBrandAndPrice(
+                                                brand,
+                                                Integer.parseInt(lowerPrice),
+                                                Integer.parseInt(upperPrice)
+                ));
+        model.addAttribute("brands", carBrandService.findAll());
+        model.addAttribute("filter3", true);
+        model.mergeAttributes(attributes);
+        return "/post/post-all";
+    }
+
     @GetMapping("/posts/filter/by_parameters")
     public String allByParameters(HttpServletRequest req, Model model) {
         String[] parameters = req.getParameterValues("p");
         String brand = parameters[0];
-        String modelYear = parameters[1];
-        String mileage = parameters[2];
-        String transmission = parameters[3];
-        String volume = parameters[4];
-        List<Post> filteredPosts = postFilter.findAllBy(brand,
-                                                        modelYear,
-                                                        mileage,
-                                                        transmission,
-                                                        volume);
-        String message = "Отфильтрованные по параметрам объявления";
+        String bodyType = parameters[1];
+        String modelYear = parameters[2];
+        String mileage = parameters[3];
+        String transmission = parameters[4];
+        String volume = parameters[5];
+        String message = "Отфильтрованные объявления по параметрам авто";
         Map<String, String> attributes = Map.of(
                                             "msg", message,
                                             "fBrand", brand,
+                                            "fBodyType", bodyType,
                                             "fModelYear", modelYear,
                                             "fMileage", mileage,
                                             "fTransmission", transmission,
                                             "fVolume", volume);
-        model.addAttribute("filter1", true);
+        List<Post> filteredPosts = postFilter.findAllByParameters(brand,
+                                                        bodyType,
+                                                        modelYear,
+                                                        mileage,
+                                                        transmission,
+                                                        volume);
         model.addAttribute("posts", filteredPosts);
         model.addAttribute("brands", carBrandService.findAll());
+        model.addAttribute("filter1", true);
         model.mergeAttributes(attributes);
         return "post/post-all";
     }
@@ -210,9 +248,10 @@ public class PostController implements ManageSession {
                       @RequestParam("brand.id") int brandId,
                       @RequestParam("file") MultipartFile file,
                       HttpServletRequest req,
-                      Model model
-                                                    ) {
+                      Model model) {
         User user = (User) model.getAttribute("user");
+        post.setCreated(LocalDateTime.now());
+        post.setSold(false);
         Optional<CarBrand> carBrandInDb = carBrandService.findById(brandId);
         carBrandInDb.ifPresent(brand -> {
                                          car.setBrand(brand);
@@ -223,8 +262,8 @@ public class PostController implements ManageSession {
                                          } catch (Exception e) {
                                              throw new RuntimeException(e);
                                          }
-                                         post.setCar(car); }
-        );
+        });
+        post.setCar(car);
         post.setUser(user);
         priceHistory.setPost(post);
         post.addPriceHistoryToList(priceHistory);
@@ -260,41 +299,79 @@ public class PostController implements ManageSession {
     public String update(@ModelAttribute Engine engine,
                          @ModelAttribute Car car,
                          @ModelAttribute PriceHistory priceHistory,
-                         @RequestParam("post.id") int postId,
-                         @RequestParam("brand.id") int brandId,
                          @RequestParam("file") MultipartFile file,
-                         @RequestParam("text") String text,
                          HttpServletRequest req,
-                         Model model) throws IOException {
+                         Model model) {
         User user = (User) model.getAttribute("user");
-        Optional<CarBrand> carBrandInDb = carBrandService.findById(brandId);
-        Optional<Post> postInDb = postService.findById(postId);
+        Optional<CarBrand> carBrandInDb =
+                carBrandService.findById(
+                        Integer.parseInt(req.getParameter("brand.id"))
+                );
+        Optional<Post> postInDb = postService.findById(
+                Integer.parseInt(req.getParameter("post.id"))
+        );
         carBrandInDb.ifPresent(brand -> {
-                                         car.setBrand(brand);
-                                         car.setEngine(engine);
-                                         try {
-                                             addDriversToCar(car, user, req);
-                                             car.setPhoto(file.getBytes());
-                                         } catch (Exception e) {
-                                            throw new RuntimeException(e);
-                                         }
+                          car.setId(
+                                  Integer.parseInt(req.getParameter("car.id"))
+                          );
+                          car.setBrand(brand);
+                          engine.setId(
+                                  Integer.parseInt(req.getParameter("engine.id"))
+                          );
+                          car.setEngine(engine);
+                          try {
+                              car.setPhoto(file.getBytes());
+                              addDriversToCar(car, user, req);
+                              engineService.update(engine);
+                              carService.update(car);
+                          } catch (Exception e) {
+                            throw new RuntimeException(e);
+                          }
         });
         postInDb.ifPresent(post -> {
-                                 post.setCar(car);
-                                 post.setText(text);
-                                 post.setUser(user);
-                                 priceHistory.setPost(post);
-                                 post.addPriceHistoryToList(priceHistory);
-                                 post.setUpdated(LocalDateTime.now());
-                                 postService.update(post);
+                                     post.setCar(car);
+                                     post.setText(req.getParameter("text"));
+                                     post.setUser(user);
+                                     priceHistory.setPost(post);
+                                     post.addPriceHistoryToList(priceHistory);
+                                     post.setUpdated(LocalDateTime.now());
+                                     postService.update(post);
         });
         return "redirect:/index";
     }
 
     @GetMapping("/posts/{postId}/delete")
     public String delete(@PathVariable("postId") int id) {
+        deletePostById(id);
+        return "redirect:/index";
+    }
+
+    @GetMapping("posts/{postId}/delete_by_admin")
+    public String deleteByAdmin(@PathVariable("postId") int id) {
+        deletePostById(id);
+        return "redirect:/posts/archive";
+    }
+
+    @GetMapping("/posts/{postId}/archive")
+    public String addToArchive(@PathVariable("postId") int id, Model model) {
+        Optional<Post> postInDb = postService.findById(id);
+        postInDb.ifPresent(post -> {
+                                    post.setSold(true);
+                                    post.setSaled(LocalDateTime.now());
+                                    postService.update(post); }
+        );
+        User user = (User) model.getAttribute("user");
+        return String.format("redirect:/posts/users/%d", Objects.requireNonNull(user).getId());
+    }
+
+    @GetMapping("/posts/archive/delete/all")
+    public String deleteAllFromArchive() {
+        adminPostService.deleteAllArchivedPosts();
+        return "redirect:/posts/archive";
+    }
+
+    private void deletePostById(int id) {
         Optional<Post> postInDb = postService.findById(id);
         postInDb.ifPresent(postService::delete);
-        return "redirect:/index";
     }
 }

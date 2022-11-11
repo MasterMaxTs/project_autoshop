@@ -38,4 +38,10 @@ public class Driver {
             CascadeType.REFRESH, CascadeType.DETACH})
     @JoinColumn(name = "user_id")
     private User user;
+
+    public Driver(String firstName, Date ownershipStartTime, Date ownershipEndTime) {
+        this.firstName = firstName;
+        this.ownershipStartTime = ownershipStartTime;
+        this.ownershipEndTime = ownershipEndTime;
+    }
 }

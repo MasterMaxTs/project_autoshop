@@ -33,4 +33,11 @@ public class Engine {
 
     @Column(name = "power")
     private int power;
+
+    public Engine(String volume, String transmission, String driveUnit, int power) {
+        this.volume = volume;
+        this.transmission = transmission;
+        this.driveUnit = driveUnit;
+        this.power = power;
+    }
 }

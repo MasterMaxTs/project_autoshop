@@ -35,6 +35,11 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
+    public void deleteAll() {
+        store.deleteAll();
+    }
+
+    @Override
     public Optional<Driver> findById(int id) {
         return store.findById(id);
     }

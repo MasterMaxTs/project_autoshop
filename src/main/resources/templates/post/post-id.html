@@ -47,6 +47,7 @@
                 <a class="nav-item nav-link" th:href="@{/posts/new}">Создать объявление</a>
                 <a class="nav-item nav-link" th:href="@{|/posts/users/${user.id}|}">Мои объявления</a>
                 <a class="nav-item nav-link" th:href="@{/posts/subscriptions}">Избранное</a>
+                <a class="nav-item nav-link" th:href="@{/posts/archive}">Архив</a>
                 <a class="nav-item nav-link" th:href="@{/formAddUser}">Регистрация</a>
                 <a class="nav-item nav-link" th:if="${user.name == 'Гость'}">
                     <form th:action="@{/loginPage}" method="GET">
@@ -85,6 +86,7 @@
             <tr>
                 <td th:with="isCurrentUser=${post.user.name == user.name}">
                     <img th:src="@{|/postPhoto/${post.id}|}" alt="No_photo" width="400" height="250"/>
+                    <br><br>
                     <div th:if="${doFavorites}">
                         <div style="float: left">
                             <button type="button" class="btn btn-secondary" style="float: left">В избранном</button>
@@ -97,24 +99,31 @@
                         </div>
                     </div>
                     <div th:if="${!doFavorites} AND ${!isCurrentUser}">
-                        <div style="float: left">
+                        <div style="float: right">
                             <form  th:action="@{|/posts/subs/${post.id}|}" method="GET">
                                 <button th:if="${!doFavorites}" type="submit" class="btn btn-success">В избранное</button>
                             </form>
                         </div>
                     </div>
-                    <div th:if="${isCurrentUser}">
-                        <div style="float: left">
-                            <form th:action="@{|/posts/${post.id}/update|}" method="GET">
-                                <button type="submit" class="btn btn-warning">Редактировать</button>
-                            </form>
-                        </div>
-                        <div style="float: right">
-                            <form th:action="@{|/posts/${post.id}/delete|}" method="GET">
-                                <button type="submit" class="btn btn-danger">Удалить</button>
-                            </form>
-                        </div>
-                    </div>
+                    <table th:if="${isCurrentUser}">
+                        <tr>
+                            <td>
+                                <form th:action="@{|/posts/${post.id}/update|}" method="GET">
+                                    <button type="submit" class="btn btn-warning">Редактировать</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form th:action="@{|/posts/${post.id}/archive|}" method="GET">
+                                    <button type="submit" class="btn btn-success">В архив</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form th:action="@{|/posts/${post.id}/delete|}" method="GET">
+                                    <button type="submit" class="btn btn-danger">Удалить</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </table>
                 </td>
                 <td>
                     <p th:text="${post.text}" style="width:650px; overflow: clip; color: gray; font-weight: normal"></p>
@@ -131,6 +140,40 @@
             <p th:text="${'Телефон: ' + post.user.phone}"></p>
             <p th:text="${'Email: ' + post.user.email}"></p>
         </div>
+        <table th:if="${param.ownership_history != null}" class="table table-bordered" style="width:30%; float: left">
+            <caption style="caption-side: top; text-align: right"><b>История владений</b></caption>
+            <thead>
+            <tr class="table-info">
+                <th scope="col">#</th>
+                <th scope="col">Дата начала</th>
+                <th scope="col">Дата окончания</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="owner,iterStat :${post.car.owners}">
+                <td th:text="${iterStat.count}"></td>
+                <td th:text="${owner.ownershipStartTime}"></td>
+                <td th:text="${owner.ownershipEndTime}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <table th:if="${param.price_history != null}" class="table table-bordered" style="width:30%; float: left">
+            <caption style="caption-side: top; text-align: right"><b>Динамика изменения цены</b></caption>
+            <thead>
+            <tr class="table-info">
+                <th scope="col">#</th>
+                <th scope="col">Цена, руб.</th>
+                <th scope="col">Дата</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="price,iterStat :${post.priceHistoryList}">
+                <td th:text="${iterStat.count}"></td>
+                <td th:text="${price.price}"></td>
+                <td th:text="${#temporals.format(price.created, 'dd-MM-yyyy HH:mm')}"></td>
+            </tr>
+            </tbody>
+        </table>
         <table class="table table-bordered">
             <caption style="caption-side: top; text-align: right"><b>Параметры</b></caption>
             <thead>
@@ -147,6 +190,7 @@
                             <thead class="thead-light">
                                 <tr>
                                     <th scope="col">Марка</th>
+                                    <th scope="col">Кузов</th>
                                     <th scope="col">Цвет</th>
                                     <th scope="col">Год</th>
                                     <th scope="col">Пробег</th>
@@ -156,6 +200,7 @@
                             <tbody>
                                 <tr th:with="car=${post.car}">
                                     <td th:text="${car.brand.name}"></td>
+                                    <td th:text="${car.bodyType}"></td>
                                     <td th:text="${car.color}"></td>
                                     <td th:text="${car.modelYear}"></td>
                                     <td th:text="${car.mileage}"></td>
@@ -194,30 +239,13 @@
                     <td th:with="isCurrentUser=${post.user.name == user.name}">
                         <p th:with="list=${post.priceHistoryList}" th:text="${list.get(#lists.size(list)-1).price}"></p>
                         <br>
-                        <div th:if="${isCurrentUser}" style="float: right">
+                        <div style="float: right">
                             <form th:action="@{|/posts/${post.id}/price-history|}" method="GET">
                                 <button type="submit" class="btn btn-light">Динамика</button>
                             </form>
                         </div>
                     </td>
                 </tr>
-            </tbody>
-        </table>
-        <table th:if="${param.ownership_history != null}" class="table table-bordered" style="width:30%; float: right">
-            <caption style="caption-side: top; text-align: right"><b>История владений</b></caption>
-            <thead>
-            <tr class="table-info">
-                <th scope="col">#</th>
-                <th scope="col">Дата начала</th>
-                <th scope="col">Дата окончания</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="owner,iterStat :${post.car.owners}">
-                <td th:text="${iterStat.count}"></td>
-                <td th:text="${owner.ownershipStartTime}"></td>
-                <td th:text="${owner.ownershipEndTime}"></td>
-            </tr>
             </tbody>
         </table>
     </div>

@@ -37,6 +37,11 @@ public class EngineRepositoryImpl implements EngineRepository {
     }
 
     @Override
+    public void deleteAll() {
+        crudRepository.run("delete from Engine", Map.of());
+    }
+
+    @Override
     public Optional<Engine> findById(int id) {
         return crudRepository.optional(
                 "from Engine where id = :fId",

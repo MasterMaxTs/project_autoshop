@@ -26,6 +26,9 @@ public class Car {
     @JoinColumn(name = "brand_id")
     private CarBrand brand;
 
+    @Column(name = "body_type")
+    private String bodyType;
+
     @Column(name = "color")
     private String color;
 
@@ -50,6 +53,20 @@ public class Car {
             inverseJoinColumns = {@JoinColumn(name = "driver_id")}
     )
     private Set<Driver> owners = new HashSet<>();
+
+    public Car(String color,
+               String bodyType,
+               String modelYear,
+               String mileage,
+               Engine engine,
+               byte[] photo) {
+        this.color = color;
+        this.bodyType = bodyType;
+        this.modelYear = modelYear;
+        this.mileage = mileage;
+        this.engine = engine;
+        this.photo = photo;
+    }
 
     public void addCarDriver(Driver driver) {
         owners.add(driver);

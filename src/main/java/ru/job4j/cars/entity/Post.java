@@ -28,13 +28,18 @@ public class Post {
     private String text;
 
     @Column(name = "created")
-    private final LocalDateTime created = LocalDateTime.now();
+    private LocalDateTime created;
 
     @Column(name = "updated")
     private LocalDateTime updated;
 
-    @OneToOne(cascade = CascadeType.ALL,
-            orphanRemoval = true)
+    @Column(name = "saled")
+    private LocalDateTime saled;
+
+    @Column(name = "is_sold")
+    private boolean isSold;
+
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "car_id")
     private Car car;
 

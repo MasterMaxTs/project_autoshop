@@ -37,6 +37,11 @@ public class DriverRepositoryImpl implements DriverRepository {
     }
 
     @Override
+    public void deleteAll() {
+        crudRepository.run("delete from Driver", Map.of());
+    }
+
+    @Override
     public Optional<Driver> findById(int id) {
         return crudRepository.optional(
                 "from Driver where id = :fId",

@@ -17,15 +17,25 @@ public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
 
     private final CrudRepository crudRepository;
 
+    /**
+     * Найти в базе все объявления, опубликованные конкретным пользователем
+     * @param id id пользователя
+     * @return список объявлений пользователя, отсортированных по времени
+     * обновления
+     */
     @Override
     public List<Post> findAllByUserId(int id) {
         return crudRepository.query(
-                "from Post p where p.user.id = :fId order by p.saled",
+                "from Post p where p.user.id = :fId order by p.updated desc",
                 Post.class,
                 Map.of("fId", id)
         );
     }
 
+    /**
+     * Найти в базе все объявления
+     * @return список объявлений, отсортированных по времени обновления
+     */
     @Override
     public List<Post> findAll() {
         return crudRepository.query(
@@ -33,27 +43,48 @@ public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
         );
     }
 
+    /**
+     * Сохранить объявление в базе
+     * @param post объявление
+     * @return объявление с id
+     */
     @Override
     public Post create(Post post) {
         crudRepository.run(session -> session.save(post));
         return post;
     }
 
+    /**
+     * Обновить объявление в базе
+     * @param post объявление
+     */
     @Override
     public void update(Post post) {
         crudRepository.run(session -> session.merge(post));
     }
 
+    /**
+     * Удалить объявление из базы
+     * @param post объявление
+     */
     @Override
     public void delete(Post post) {
         crudRepository.run(session -> session.delete(post));
     }
 
+    /**
+     * Удалить все объявления из базы
+     */
     @Override
     public void deleteAll() {
         crudRepository.run("delete from Post", Map.of());
     }
 
+    /**
+     * Найти объявление в базе по ID
+     * @param id id объявления
+     * @return объявление в виде Optional
+     */
     @Override
     public Optional<Post> findById(int id) {
         return crudRepository.optional(
@@ -63,6 +94,11 @@ public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
         );
     }
 
+    /**
+     * Отфильтровать и вывести из базы все объявления,
+     * опубликованные за сутки
+     * @return отфильтрованные за сутки объявления
+     */
     @Override
     public List<Post> findAllForLastDay() {
         LocalDateTime end = LocalDateTime.now();
@@ -80,6 +116,11 @@ public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
                 ));
     }
 
+    /**
+     * Отфильтровать и вывести из базы все объявления,
+     * отвещающие критериям поиска
+     * @return отфильтрованные по параметрам авто объявления
+     */
     @Override
     public List<Post> findAllByParameters(String brand,
                                           String bodyType,
@@ -111,6 +152,13 @@ public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
                 ));
     }
 
+
+    /**
+     * Отфильтровать и вывести из базы все объявления,
+     * отвещающие критериям поиска
+     * @return отфильтрованные по марке авто и стоимости,
+     * указанной в виде диапазона, объявления
+     */
     @Override
     public List<Post> findAllByCarBrandAndPrice(String brand, int minPrice,
                                                 int maxPrice) {

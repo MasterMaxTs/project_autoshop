@@ -5,8 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "auto_cars")
@@ -33,10 +32,10 @@ public class Car {
     private String color;
 
     @Column(name = "model_year")
-    private String modelYear;
+    private int modelYear;
 
     @Column(name = "mileage")
-    private String mileage;
+    private int mileage;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "engine_id")
@@ -52,12 +51,12 @@ public class Car {
             joinColumns = {@JoinColumn(name = "car_id")},
             inverseJoinColumns = {@JoinColumn(name = "driver_id")}
     )
-    private Set<Driver> owners = new HashSet<>();
+    private Set<Driver> owners = new LinkedHashSet<>();
 
     public Car(String color,
                String bodyType,
-               String modelYear,
-               String mileage,
+               int modelYear,
+               int mileage,
                Engine engine,
                byte[] photo) {
         this.color = color;

@@ -19,20 +19,52 @@
             integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
             crossorigin="anonymous"></script>
     <script type='text/javascript'>
-        var i=0;
+        var i = 0;
         function addFields(){
             i++;
+            newParagraphField();
+            newLabelField('firstname')
             newInputField('firstname');
+            newLabelField('lastname')
             newInputField('lastname');
+            newLabelField('start');
             newInputDateField('start');
+            newLabelField('end');
             newInputDateField('end');
+            container.appendChild(document.createElement('br'));
+        }
+        function newParagraphField(){
+            var p = document.createElement('p');
+            p.textContent = i + 1 + ' владелец:';
+            container.appendChild(p);
+        }
+        function newLabelField(n){
+            container.appendChild(document.createElement('br'));
+            var label = document.createElement('label');
+            var labelText;
+            switch(n) {
+                        case 'firstname':
+                            labelText ='Имя';
+                            break;
+                        case 'lastname':
+                            labelText ='Фамилия';
+                            break;
+                        case 'start':
+                            labelText ='Начало владения';
+                            break;
+                        case 'end':
+                            labelText ='Конец владения';
+                            break;
+            }
+            label.textContent = labelText;
+            container.appendChild(label);
             container.appendChild(document.createElement('br'));
         }
         function newInputField(n){
             var input = document.createElement('input');
             input.type = 'text';
             input.name = n;
-            input.placeholder = n + i;
+            input.placeholder = (n === 'firstname')? 'Введите имя' : 'Введите фамилию';
             input.required = true;
             container.appendChild(input);
             container.appendChild(document.createElement('br'));
@@ -41,7 +73,7 @@
             var input = document.createElement('input');
             input.type = 'date';
             input.name = n;
-            input.placeholder = n + i;
+            input.placeholder = (n === 'start')? 'Начало владения' : 'Конец владения';
             input.required = true;
             container.appendChild(input);
             container.appendChild(document.createElement('br'));
@@ -189,24 +221,26 @@
                 </fieldset>
                 <fieldset>
                     <legend>Владельцы по ПТС</legend><br>
-                        <div id="container"> Владелец:<br><br>
-                            <label>Имя
-                            <input name="firstname" placeholder="Введите имя" required/>
-                            </label>
-                            <br>
-                            <label>Фамилия
-                                <input name="lastname" placeholder="Введите фамилию" required/>
-                            </label>
-                            <br>
-                            <label>Начало владения
-                                <input type="date" name="start" placeholder="Начало" required/>
-                            </label>
-                            <br>
-                            <label>Конец владения
-                                <input type="date" name="end" placeholder="Конец" required/>
-                            </label>
-                            <br><br>
-                        </div>
+                    <div>
+                        <p> 1 владелец: </p><br>
+                        <label for="firstname">Имя</label>
+                        <br>
+                        <input type="text" name="firstname" id="firstname" placeholder="Введите имя" required/>
+                        <br><br>
+                        <label for="lastname">Фамилия</label>
+                        <br>
+                        <input type="text" name="lastname" id="lastname" placeholder="Введите фамилию" required/>
+                        <br><br>
+                        <label for="start">Начало владения</label>
+                        <br>
+                        <input type="date" name="start" id="start" placeholder="Начало" required/>
+                        <br><br>
+                        <label for="end">Конец владения</label>
+                        <br>
+                        <input type="date" name="end" id="end" placeholder="Конец" required/>
+                        <br><br>
+                    </div>
+                    <div id="container"></div><br>
                     <button onclick="addFields()">Добавить владельца</button>
                     <br><br>
                 </fieldset>

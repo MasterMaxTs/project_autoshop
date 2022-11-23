@@ -18,35 +18,6 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
             integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
             crossorigin="anonymous"></script>
-    <script type='text/javascript'>
-        var i=0;
-        function addFields(){
-            i++;
-            newInputField('firstname');
-            newInputField('lastname');
-            newInputDateField('start');
-            newInputDateField('end');
-            container.appendChild(document.createElement('br'));
-        }
-        function newInputField(n){
-            var input = document.createElement('input');
-            input.type = 'text';
-            input.name = n;
-            input.placeholder = n + i;
-            input.required = true;
-            container.appendChild(input);
-            container.appendChild(document.createElement('br'));
-        }
-        function newInputDateField(n){
-            var input = document.createElement('input');
-            input.type = 'date';
-            input.name = n;
-            input.placeholder = n + i;
-            input.required = true;
-            container.appendChild(input);
-            container.appendChild(document.createElement('br'));
-        }
-    </script>
     <title>Редактировать объявление</title>
 </head>
 <body>
@@ -94,38 +65,36 @@
                     <legend>Модель</legend>
                     <label for="brand">Марка</label>
                     <br>
-                    <input type="hidden" name="brand.id" th:value="${car.brand.id}"/>
-                    <input type="hidden" name="car.id" th:value="${car.id}"/>
                     <input type="text" name="brand.id" id="brand" th:value="${car.brand.name}" size="13" disabled/>
                     <br><br>
                     <label for="body_type">Кузов</label>
                     <input type="text" name="bodyType" id="body_type" th:value="${car.bodyType}" size="13" readonly/>
                     <br><br>
-                    <label for="color">Цвет</label>
+                    <label for="color">Цвет (править)</label>
                     <input type="text" name="color" id="color" th:value="${car.color}" size="19" required/>
                     <br><br>
                     <label for="model_year">Год выпуска:</label>
                     <input type="text" name="modelYear" id="model_year" th:value="${car.modelYear}" size="2" readonly/>
                     <br><br>
-                    <label for="mileage">Пробег, км.</label>
+                    <label for="mileage">Пробег, км. (править)</label>
                     <input type="text" name="mileage" id="mileage" th:value="${car.mileage}" size="3" required/>
                     <br><br>
-                    <label for="price"><b>Цена</b></label>
+                    <label for="price"><b>Цена (править)</b></label>
                     <br>
                     <input type="text" name="price" id="price" th:with="list=${post.priceHistoryList}"
                            th:value="${list.get(#lists.size(list)-1).price}" size="5" required/>
                     <br><br>
                 </fieldset>
                 <fieldset>
-                    <legend>Фото</legend>
+                    <legend>Фото (править)</legend>
                     <label for="photo">Загрузить (максимальный размер 1Мб)</label>
                     <br>
-                    <input type="file" name="file" id="photo" required/>
+                    <input type="file" name="file" id="photo"/>
                     <br><br>
                 </fieldset>
                 <fieldset th:with="engine=${post.car.engine}">
                     <legend>Двигатель</legend>
-                    <label for="name">Название</label>
+                    <label for="name">Название (править)</label>
                     <input type="hidden" name="engine.id" th:value="${engine.id}"/>
                     <input type="text" name="name" id="name" th:value="${engine.name}" size="4"/>
                     <br><br>
@@ -138,35 +107,12 @@
                     <label for="volume">Объём, л.</label>
                     <input type="text" name="volume" id="volume" th:value="${engine.volume}" size="1" readonly/>
                     <br><br>
-                    <label for="power">Мощность, лс.</label>
+                    <label for="power">Мощность, лс. (править)</label>
                     <input type="text" name="power" id="power" th:value="${engine.power}" size="1" required/>
                     <br><br>
                 </fieldset>
                 <fieldset>
-                    <legend>Владельцы по ПТС</legend><br>
-                    <div id="container"> Владелец:<br><br>
-                        <label>Имя
-                            <input name="firstname" placeholder="Введите имя" required/>
-                        </label>
-                        <br>
-                        <label>Фамилия
-                            <input name="lastname" placeholder="Введите фамилию" required/>
-                        </label>
-                        <br>
-                        <label>Начало владения
-                            <input type="date" name="start" placeholder="Начало" required/>
-                        </label>
-                        <br>
-                        <label>Конец владения
-                            <input type="date" name="end" placeholder="Конец" required/>
-                        </label>
-                        <br><br>
-                    </div>
-                    <button onclick="addFields()">Добавить владельца</button>
-                    <br><br>
-                </fieldset>
-                <fieldset>
-                    <legend>Описание объявления</legend>
+                    <legend>Описание объявления (править)</legend>
                     <label for="desc"></label>
                     <textarea style="height: 150px; width: 500px"
                               id="desc" name="text" th:text="${post.text}" required></textarea>

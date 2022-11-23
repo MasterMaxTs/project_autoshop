@@ -49,7 +49,7 @@ public class Post {
     private User user;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "post", fetch = FetchType.EAGER)
-    private List<PriceHistory> priceHistoryList;
+    private final List<PriceHistory> priceHistoryList = new ArrayList<>();
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.REFRESH, CascadeType.DETACH},
@@ -59,19 +59,20 @@ public class Post {
             joinColumns = {@JoinColumn(name = "post_id")},
             inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
-    private Set<User> participants;
+    private final Set<User> participants = new HashSet<>();
 
     public void addPriceHistoryToList(PriceHistory priceHistory) {
-        if (priceHistoryList == null) {
-            priceHistoryList = new ArrayList<>();
+        int size = priceHistoryList.size();
+        if (size == 0) {
+            priceHistoryList.add(priceHistory);
+            return;
         }
-        priceHistoryList.add(priceHistory);
+        if (priceHistoryList.get(size - 1).getPrice() != priceHistory.getPrice()) {
+            priceHistoryList.add(priceHistory);
+        }
     }
 
     public void addParticipantToPost(User user) {
-        if (participants == null) {
-            participants = new HashSet<>();
-        }
         participants.add(user);
     }
 

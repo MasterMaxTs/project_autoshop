@@ -8,8 +8,9 @@ public interface PostRepoFilter {
 
     List<Post> findAllForLastDay();
 
-    List<Post> findAllByParameters(String brand, String bodyType, String modelYear,
-                                   String mileage, String transmission, String volume);
+    List<Post> findAllByParameters(String brand, String bodyType, int modelYear,
+                                   int mileage, String transmission,
+                                   String volume);
 
     List<Post> findAllByCarBrandAndPrice(String brand, int minPrice,
                                          int maxPrice);

@@ -206,7 +206,7 @@ public class PostController implements ManageSession {
         model.addAttribute("brands", carBrandService.findAll());
         model.addAttribute("filter3", true);
         model.mergeAttributes(attributes);
-        return "/post/post-all";
+        return "post/post-all";
     }
 
     @GetMapping("/posts/filter/by_parameters")
@@ -229,8 +229,8 @@ public class PostController implements ManageSession {
                                             "fVolume", volume);
         List<Post> filteredPosts = postFilter.findAllByParameters(brand,
                                                         bodyType,
-                                                        modelYear,
-                                                        mileage,
+                                                        Integer.parseInt(modelYear),
+                                                        Integer.parseInt(mileage),
                                                         transmission,
                                                         volume);
         model.addAttribute("posts", filteredPosts);
@@ -289,54 +289,47 @@ public class PostController implements ManageSession {
             drivers[i].setOwnershipEndTime(sdf.parse(ends[i]));
         }
         Arrays.stream(drivers).forEach(driver -> {
-                                                 driver.setUser(user);
-                                                 car.addCarDriver(driver);
-                                                 driverService.create(driver);
+                                                  driver.setUser(user);
+                                                  driverService.create(driver);
+                                                  car.addCarDriver(driver);
                                             });
     }
 
     @PostMapping("/updatePost")
     public String update(@ModelAttribute Engine engine,
-                         @ModelAttribute Car car,
                          @ModelAttribute PriceHistory priceHistory,
                          @RequestParam("file") MultipartFile file,
-                         HttpServletRequest req,
-                         Model model) {
-        User user = (User) model.getAttribute("user");
-        Optional<CarBrand> carBrandInDb =
-                carBrandService.findById(
-                        Integer.parseInt(req.getParameter("brand.id"))
-                );
+                         HttpServletRequest req) {
         Optional<Post> postInDb = postService.findById(
                 Integer.parseInt(req.getParameter("post.id"))
         );
-        carBrandInDb.ifPresent(brand -> {
-                          car.setId(
-                                  Integer.parseInt(req.getParameter("car.id"))
-                          );
-                          car.setBrand(brand);
-                          engine.setId(
-                                  Integer.parseInt(req.getParameter("engine.id"))
-                          );
-                          car.setEngine(engine);
-                          try {
-                              car.setPhoto(file.getBytes());
-                              addDriversToCar(car, user, req);
-                              engineService.update(engine);
-                              carService.update(car);
-                          } catch (Exception e) {
-                            throw new RuntimeException(e);
-                          }
-        });
-        postInDb.ifPresent(post -> {
-                                     post.setCar(car);
-                                     post.setText(req.getParameter("text"));
-                                     post.setUser(user);
-                                     priceHistory.setPost(post);
-                                     post.addPriceHistoryToList(priceHistory);
-                                     post.setUpdated(LocalDateTime.now());
-                                     postService.update(post);
-        });
+        postInDb.ifPresent(
+            post -> {
+                    Car car = post.getCar();
+                    car.setColor(req.getParameter("color"));
+                    try {
+                        byte[] fileBytes = file.getBytes();
+                        if (fileBytes.length != 0) {
+                            car.setPhoto(fileBytes);
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    car.setMileage(
+                            Integer.parseInt(req.getParameter("mileage"))
+                    );
+                    engine.setId(car.getEngine().getId());
+                    car.setEngine(engine);
+                    post.setCar(car);
+                    engineService.update(engine);
+                    carService.update(car);
+                    post.setText(req.getParameter("text"));
+                    priceHistory.setPost(post);
+                    post.addPriceHistoryToList(priceHistory);
+                    post.setUpdated(LocalDateTime.now());
+                    postService.update(post);
+                    }
+        );
         return "redirect:/index";
     }
 

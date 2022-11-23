@@ -124,8 +124,8 @@ public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
     @Override
     public List<Post> findAllByParameters(String brand,
                                           String bodyType,
-                                          String modelYear,
-                                          String mileage,
+                                          int modelYear,
+                                          int mileage,
                                           String transmission,
                                           String volume
                                 ) {
@@ -133,8 +133,8 @@ public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
                 "from Post p"
                         + " where"
                         + " p.isSold = :fCond"
-                        + " AND p.car.brand.name = :fBrand"
-                        + " AND p.car.bodyType >=:fBody"
+                        + " AND p.car.brand.name =:fBrand"
+                        + " AND p.car.bodyType =:fBody"
                         + " AND p.car.modelYear >=:fYear"
                         + " AND p.car.mileage <= :fMileage"
                         + " AND p.car.engine.transmission = :fTransmission"

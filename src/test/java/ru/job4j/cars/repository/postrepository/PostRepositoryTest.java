@@ -63,10 +63,10 @@ public class PostRepositoryTest {
         int brandId1 = 1;
         Car car1 = new Car(
                 "slick silver",
-                "sedan",
-                "2018",
-                "30000",
-                new Engine("1.6","AT ", "front-wheel", 123),
+                "Sedan",
+                2018,
+                30000,
+                new Engine("1.6","AT", "front-wheel", 123),
                 new byte[]{}
         );
         addBrandToCar(brandId1, car1);
@@ -92,10 +92,10 @@ public class PostRepositoryTest {
         int brandId2 = 2;
         Car car2 = new Car(
                 "black",
-                "hatchback",
-                "2015",
-                "200000",
-                new Engine("2.0","MT ", "front-wheel", 150),
+                "Hatchback",
+                2015,
+                200000,
+                new Engine("2.0","MT", "front-wheel", 150),
                 new byte[]{}
         );
         addBrandToCar(brandId2, car2);
@@ -206,15 +206,15 @@ public class PostRepositoryTest {
         List<Post> rsl =
                 postRepository.findAllByUserId(post1.getUser().getId());
         assertThat(rsl.get(0).getText(), is("Sale1"));
-        assertThat(rsl.get(0).getCar().getModelYear(), is("2018"));
+        assertThat(rsl.get(0).getCar().getModelYear(), is(2018));
         assertThat(rsl.size(), is(1));
     }
 
     @Test
     public void whenCreateSomePostsThanPostRepoHasAll() {
         List<Post> rsl = postRepository.findAll();
-        assertThat(rsl.get(0).getCar().getModelYear(), is("2018"));
-        assertThat(rsl.get(1).getCar().getModelYear(), is("2015"));
+        assertThat(rsl.get(0).getCar().getModelYear(), is(2018));
+        assertThat(rsl.get(1).getCar().getModelYear(), is(2015));
         assertThat(rsl.size(), is(2));
     }
 
@@ -237,16 +237,16 @@ public class PostRepositoryTest {
         List<Post> rsl = postRepoFilter.findAllByParameters(
                                                         "Toyota",
                                                         "Sedan",
-                                                        "2017",
-                                                        "40000",
+                                                        2017,
+                                                        50000,
                                                         "AT",
                                                         "1.6"
                                                                       );
         assertThat(rsl.size(), is(1));
         assertThat(rsl.get(0).getCar().getBrand().getName(), is("Toyota"));
-        assertThat(rsl.get(0).getCar().getModelYear(), is("2018"));
-        assertThat(rsl.get(0).getCar().getMileage(), is("30000"));
-        assertThat(rsl.get(0).getCar().getEngine().getTransmission(), is("AT "));
+        assertThat(rsl.get(0).getCar().getModelYear(), is(2018));
+        assertThat(rsl.get(0).getCar().getMileage(), is(30000));
+        assertThat(rsl.get(0).getCar().getEngine().getTransmission(), is("AT"));
         assertThat(rsl.get(0).getCar().getEngine().getVolume(), is("1.6"));
     }
 
@@ -255,8 +255,8 @@ public class PostRepositoryTest {
         List<Post> rsl = postRepoFilter.findAllByParameters(
                                                         "Toyota",
                                                         "Sedan",
-                                                        "2020",
-                                                        "40000",
+                                                        2020,
+                                                        40000,
                                                         "AT",
                                                         "1.6"
                                                                       );

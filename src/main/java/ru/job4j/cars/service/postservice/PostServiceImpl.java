@@ -65,8 +65,8 @@ public class PostServiceImpl implements PostService, PostFilter {
     @Override
     public List<Post> findAllByParameters(String brand,
                                           String bodyType,
-                                          String modelYear,
-                                          String mileage,
+                                          int modelYear,
+                                          int mileage,
                                           String transmission,
                                           String volume) {
         return storeFilter.findAllByParameters(brand,

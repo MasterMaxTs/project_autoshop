@@ -105,15 +105,10 @@ public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
         LocalDateTime start = end.minusDays(1L);
         return crudRepository.query(
                 "from Post"
-                        + " where isSold = :fCond"
-                        + " AND created between :start and :end"
+                        + " where created between :start and :end"
                         + " order by updated desc",
                 Post.class,
-                Map.of(
-                        "fCond", false,
-                        "start", start,
-                        "end", end
-                ));
+                Map.of("start", start, "end", end));
     }
 
     /**
@@ -132,8 +127,7 @@ public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
         return crudRepository.query(
                 "from Post p"
                         + " where"
-                        + " p.isSold = :fCond"
-                        + " AND p.car.brand.name =:fBrand"
+                        + " p.car.brand.name =:fBrand"
                         + " AND p.car.bodyType =:fBody"
                         + " AND p.car.modelYear >=:fYear"
                         + " AND p.car.mileage <= :fMileage"
@@ -142,7 +136,6 @@ public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
                         + " order by p.updated desc",
                 Post.class,
                 Map.of(
-                        "fCond", false,
                         "fBrand", brand,
                         "fBody", bodyType,
                         "fYear", modelYear,
@@ -166,8 +159,6 @@ public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
         "select p from Post p"
             + " join p.priceHistoryList phl"
             + " where"
-            + " p.isSold = :fCond"
-            + " AND"
             + " p.car.brand.name = :fBrand"
             + " AND"
             + " phl.id IN (select MAX(ph.id) from PriceHistory ph group by ph.post.id)"
@@ -176,7 +167,6 @@ public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
             + " order by p.updated desc",
                 Post.class,
                 Map.of(
-                        "fCond", false,
                         "fBrand", brand,
                         "fMinPrice", minPrice,
                         "fMaxPrice", maxPrice)

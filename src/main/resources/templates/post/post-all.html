@@ -64,6 +64,11 @@
                         </form>
                     </a>
                 </a>
+                <a th:if="${user.login == 'admin'}">
+                    <a class="nav-item nav-link" th:href="@{/requests/profile-deletion}" style="color: indianred">
+                        <span> <i class="fa fa-address-book-o" aria-hidden="true" title="Заявки на удаление"></i></span>
+                    </a>
+                </a>
             </div>
         </div>
     </nav>

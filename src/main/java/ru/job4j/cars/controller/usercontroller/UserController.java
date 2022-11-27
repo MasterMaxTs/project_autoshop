@@ -3,17 +3,16 @@ package ru.job4j.cars.controller.usercontroller;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.job4j.cars.controller.ManageSession;
 import ru.job4j.cars.entity.User;
+import ru.job4j.cars.service.adminservice.AdminUserService;
 import ru.job4j.cars.service.userservice.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Controller
@@ -21,10 +20,17 @@ import java.util.Optional;
 public class UserController implements ManageSession {
 
     private final UserService userService;
+    private final AdminUserService adminUserService;
 
     @ModelAttribute("user")
     User addUserToModels(HttpSession session) {
         return getUserFromSession(session);
+    }
+
+    @GetMapping("/users")
+    public String all(Model model) {
+        model.addAttribute("users", userService.findAll());
+        return "/user/user-all";
     }
 
     @GetMapping("/formAddUser")
@@ -63,6 +69,7 @@ public class UserController implements ManageSession {
             session.setAttribute("user", user);
             return "user/user-update-confirm";
         }
+        user.setCreated(LocalDateTime.now());
         HttpSession session = req.getSession();
         session.setAttribute("user", userService.create(user));
         return "user/user-registration-confirm";
@@ -74,12 +81,45 @@ public class UserController implements ManageSession {
         return "redirect:/formAddUser";
     }
 
+    @GetMapping("/users/{userId}/delete-request")
+    public String addUserToProfileDeletionRequests(@PathVariable("userId") int id) {
+        Optional<User> userInDb = userService.findById(id);
+        userInDb.ifPresent(user -> {
+                                    user.setCheck(true);
+                                    user.setCheckCreated(LocalDateTime.now());
+                                    userService.update(user);
+        });
+        return "/user/user-deletion-request-confirm";
+    }
+
+    @GetMapping("/requests/profile-deletion")
+    public String allUserForDeletion(Model model) {
+        model.addAttribute("users", adminUserService.findAllDeletionRequests());
+        return "user/user-all-deletion-requests";
+    }
+
+    @GetMapping("users/{userId}/delete")
+    public String delete(@PathVariable("userId") int id) {
+        Optional<User> userInDb = userService.findById(id);
+        userInDb.ifPresent(adminUserService::delete);
+        return "redirect:/users";
+    }
+
+    @GetMapping("/users/{userId}/undo-deletion")
+    public String doNotDelete(@PathVariable("userId") int id) {
+        Optional<User> userInDb = userService.findById(id);
+        userInDb.ifPresent(user -> {
+                                    user.setCheck(false);
+                                    userService.update(user);
+        });
+        return "redirect:/users";
+    }
+
     @GetMapping("/loginPage")
     public String formLoginPage(
-            @ModelAttribute User user,
-            @RequestParam(value = "msgFail", required = false) String msg,
-            Model model
-    ) {
+                    @ModelAttribute User user,
+                    @RequestParam(value = "msgFail", required = false) String msg,
+                    Model model) {
         model.addAttribute("msgFail", msg);
         return "user/user-login";
     }
@@ -87,8 +127,7 @@ public class UserController implements ManageSession {
     @PostMapping("/login")
     public String login(@ModelAttribute User user,
                         RedirectAttributes ra,
-                        HttpServletRequest req
-    ) {
+                        HttpServletRequest req) {
         Optional<User> userInDb = userService.findByLoginAndPassword(user);
         if (userInDb.isPresent()) {
             HttpSession session = req.getSession();

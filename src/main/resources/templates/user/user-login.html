@@ -18,7 +18,7 @@
             integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <title>Все задания</title>
+    <title>Аутентификация</title>
 </head>
 <body>
 <div class="container">
@@ -49,9 +49,15 @@
                         </form>
                     </a>
                 </a>
+                <a th:if="${user.login == 'admin'}">
+                    <a class="nav-item nav-link" th:href="@{/requests/profile-deletion}" style="color: indianred">
+                        <span> <i class="fa fa-address-book-o" aria-hidden="true" title="Заявки на удаление"></i></span>
+                    </a>
+                </a>
             </div>
         </div>
     </nav>
+    <br>
     <form class="form-group" th:action="@{/login}" th:object="${user}" method="POST">
         <div class="card-body"><b>Авторизация:</b>
             <br><br>

@@ -73,8 +73,11 @@
         </div>
     </nav>
     <br>
-    <div class="radius position">
-        <p> Уважаемый, <span th:text="${user.name}"></span>, Вы успешно зарегистрировались в системе!</p><br>
+    <div class="radius position" >
+        <p> Уважаемый, <span th:text="${user.name}"></span>,
+            Ваш запрос на удаление профиля успешно отправлен администратору сервиса
+            и будет обработан в ближайшее время!</p>
+        <p>Спасибо за пользование нашим сервисом!!!</p>
         <form th:action="@{/index}" method="GET">
             <button type="submit" class="btn btn-primary">К объявлениям</button>
         </form>

@@ -18,7 +18,22 @@
             integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <title>Все задания</title>
+    <style>
+        .radius {
+            background: ghostwhite;
+            border: 1px solid grey ;
+            border-radius: 10px 10px 10px 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            opacity: 85%;
+        }
+        .position {
+            width: 400px;
+            margin: 7px;
+            padding: 10px;
+        }
+    </style>
+    <title>Регистрация</title>
 </head>
 <body>
 <div class="container">
@@ -50,48 +65,67 @@
                         </form>
                     </a>
                 </a>
+                <a th:if="${user.login == 'admin'}">
+                    <a class="nav-item nav-link" th:href="@{/requests/profile-deletion}" style="color: indianred">
+                        <span> <i class="fa fa-address-book-o" aria-hidden="true" title="Заявки на удаление"></i></span>
+                    </a>
+                </a>
             </div>
         </div>
     </nav>
-    <form class="form-group" th:action="@{/addUser}" th:object="${user}" method="POST">
-        <div class="card-body">
-            <b th:text="${flag} ? 'Редактирование пользователя' : 'Добавление пользователя'"></b>
+    <br>
+    <div class="radius position" style="float: left">
+        <form class="form-group" th:action="@{/addUser}" th:object="${user}" method="POST">
+        <b th:text="${flag} ? 'Редактирование пользователя' : 'Добавление пользователя'"></b>
+        <br><br>
+        <div class="form-group">
+            <input type="hidden" name="flag" th:value="${flag}"/>
+            <label for="name" th:text="${flag} ? 'Новое имя' : 'Имя'"></label>
+            <br>
+            <input type="text" id="name" placeholder="Введите имя" th:field="*{name}" required/>
+            <span th:if="${msgName} != null" th:text="${msgName}" style="color: crimson"></span>
             <br><br>
-            <div class="form-group">
-                <input type="hidden" name="flag" th:value="${flag}"/>
-                <label for="name" th:text="${flag} ? 'Новое имя' : 'Имя'"></label>
-                <br>
-                <input type="text" id="name" placeholder="Введите имя" th:field="*{name}" required/>
-                <span th:if="${msgName} != null" th:text="${msgName}" style="color: crimson"></span>
-                <br><br>
-                <label for="phone" th:text="${flag} ? 'Новый телефон (сотовый)' : 'Телефон (сотовый)'"></label>
-                <br>
-                <input type="tel" pattern="^[+]*[0-9]{11}" id="phone"
-                                                        placeholder="Введите телефон (11 цифр)" th:field="*{phone}" required/>
-                <br><br>
-                <label for="email">Email</label>
-                <br>
-                <input th:if="${flag == null}" type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
-                                                id="email" placeholder="Введите email" th:field="*{email}" required/>
-                <span th:if="${msgEmail} != null" th:text="${msgEmail}" style="color: crimson"></span>
-                <input th:if="${flag != null}" type="text" th:field="*{email}" disabled/>
-                <br><br>
-                <label for="login">Логин</label>
-                <br>
-                <input th:if="${flag == null}" type="text" id="login" placeholder="Придумайте login" th:field="*{login}" required/>
-                <span th:if="${msgLogin} != null" th:text="${msgLogin}" style="color: crimson"></span>
-                <input th:if="${flag != null}" type="text" th:field="*{login}" disabled/>
-                <br><br>
-                <label for="pwd" th:text="${flag} ? 'Новый пароль' : 'Пароль'"></label>
-                <br>
-                <input type="password" id="pwd" placeholder="Придумайте password" th:field="*{password}" required/>
-                <br><br>
-                <button type="submit" class="btn btn-primary">
-                    <span th:text="${flag} ? 'Редактировать' : 'Зарегистрировать'"></span>
-                </button>
-            </div>
+            <label for="phone" th:text="${flag} ? 'Новый телефон (сотовый)' : 'Телефон (сотовый)'"></label>
+            <br>
+            <input type="tel" pattern="^[+]*[0-9]{11}" id="phone"
+                                                    placeholder="Введите телефон (11 цифр)" th:field="*{phone}" required/>
+            <br><br>
+            <label for="email">Email</label>
+            <br>
+            <input th:if="${flag == null}" type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                                            id="email" placeholder="Введите email" th:field="*{email}" required/>
+            <span th:if="${msgEmail} != null" th:text="${msgEmail}" style="color: crimson"></span>
+            <input th:if="${flag != null}" type="text" th:field="*{email}" disabled/>
+            <br><br>
+            <label for="login">Логин</label>
+            <br>
+            <input th:if="${flag == null}" type="text" id="login" placeholder="Придумайте login" th:field="*{login}" required/>
+            <span th:if="${msgLogin} != null" th:text="${msgLogin}" style="color: crimson"></span>
+            <input th:if="${flag != null}" type="text" th:field="*{login}" disabled/>
+            <br><br>
+            <label for="pwd" th:text="${flag} ? 'Новый пароль' : 'Пароль'"></label>
+            <br>
+            <input type="password" id="pwd" placeholder="Придумайте password" th:field="*{password}" required/>
+            <br><br>
+            <button type="submit" th:text="${flag} ? 'Редактировать' : 'Зарегистрировать'" class="btn btn-primary"></button>
         </div>
-    </form>
+        </form>
+    </div>
+    <div th:if="${flag} and ${user.login != 'admin'}" class="radius position" style="border-radius: 10px 20px; float: right">
+        <table>
+            <tbody>
+                <tr>
+                    <td>Запрос на удаление профиля >>></td>
+                    <td>
+                        <form th:action="@{|/users/${user.id}/delete-request|}" method="GET">
+                            <button type="submit" class="btn btn-danger" style="float: right">Отправить</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
 </div>
 </body>
 </html>

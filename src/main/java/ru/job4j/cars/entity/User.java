@@ -5,6 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Set;
 
 @Entity
@@ -35,8 +37,20 @@ public class User {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "created")
+    private LocalDateTime created;
+
+    @Column(name = "deletion_request")
+    private boolean check;
+
+    @Column(name = "deletion_request_created")
+    private LocalDateTime checkCreated;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Set<Post> posts;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private Set<Driver> drivers;
 
     public User(String name, String phone, String email, String login, String password) {
         this.name = name;

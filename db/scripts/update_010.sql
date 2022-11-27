@@ -6,6 +6,9 @@ CREATE TABLE IF NOT EXISTS auto_users
     email    VARCHAR(30) NOT NULL,
     login    VARCHAR(20) NOT NULL UNIQUE,
     password VARCHAR(20) NOT NULL,
+    created TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
+    deletion_request BOOLEAN DEFAULT false,
+    deletion_request_created TIMESTAMP WITHOUT TIME ZONE,
     UNIQUE (login, email)
 );
 

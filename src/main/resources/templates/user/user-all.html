@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+<html lang="en">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -32,7 +32,7 @@
             padding: 10px;
         }
     </style>
-    <title>Подтверждение</title>
+    <title>Все пользователи</title>
 </head>
 <body>
 <div class="container">
@@ -49,7 +49,7 @@
                 <a class="nav-item nav-link" th:href="@{|/posts/users/${user.id}|}">Мои объявления</a>
                 <a class="nav-item nav-link" th:href="@{/posts/subscriptions}">Избранное</a>
                 <a class="nav-item nav-link" th:href="@{/posts/archive}">Архив</a>
-                <a class="nav-item nav-link active" th:href="@{/formAddUser}">Регистрация</a>
+                <a class="nav-item nav-link" th:href="@{/formAddUser}">Регистрация</a>
                 <a class="nav-item nav-link" th:if="${user.name == 'Гость'}">
                     <form th:action="@{/loginPage}" method="GET">
                         <button type="submit" class="btn btn-info"><span th:text="${user.name}"></span> | Войти</button>
@@ -73,12 +73,35 @@
         </div>
     </nav>
     <br>
-    <div class="radius position">
-        <p> Уважаемый, <span th:text="${user.name}"></span>, Вы успешно зарегистрировались в системе!</p><br>
-        <form th:action="@{/index}" method="GET">
-            <button type="submit" class="btn btn-primary">К объявлениям</button>
-        </form>
-    </div>
+    <a name="anchor"></a>
+    <table class="table table-striped">
+        <caption style="caption-side: top; text-align: right; font-weight: bold">Все пользователи</caption>
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Имя</th>
+            <th scope="col">Login</th>
+            <th scope="col">Email</th>
+            <th scope="col">Телефон</th>
+            <th scope="col">Зарегистрирован</th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr th:each="user: ${users}">
+                <td>
+                    <span th:text="${user.id}"></span>
+                    <i th:if="${user.login == 'admin'}" class="fa fa-user-secret" aria-hidden="true" title="Администратор"></i>
+                </td>
+                <td th:text="${user.name}"></td>
+                <td th:text="${user.login}"></td>
+                <td th:text="${user.email}"></td>
+                <td th:text="${user.phone}"></td>
+                <td th:text="${#temporals.format(user.created,'dd-MM-yyyy HH:mm')}"></td>
+            </tr>
+        </tbody>
+    </table>
+    <button type="button" class="btn btn-primary" onclick="window.location.href='#anchor'" style="float: right">К началу</button>
+    <br><br>
 </div>
 </body>
 </html>

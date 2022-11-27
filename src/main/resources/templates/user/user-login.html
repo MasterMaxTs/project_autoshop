@@ -18,6 +18,21 @@
             integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .radius {
+            background: ghostwhite;
+            border: 1px solid grey ;
+            border-radius: 10px 10px 10px 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            opacity: 85%;
+        }
+        .position {
+            width: 400px;
+            margin: 7px;
+            padding: 10px;
+        }
+    </style>
     <title>Аутентификация</title>
 </head>
 <body>
@@ -61,7 +76,7 @@
     <form class="form-group" th:action="@{/login}" th:object="${user}" method="POST">
         <div class="card-body"><b>Авторизация:</b>
             <br><br>
-            <div class="form-group">
+            <div class="radius position">
                 <label for="login" class="visually-hidden">Логин</label>
                 <br>
                 <input type="text" id="login" placeholder="Введите login" th:field="*{login}" required>

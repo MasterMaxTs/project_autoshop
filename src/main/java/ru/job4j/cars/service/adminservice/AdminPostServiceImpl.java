@@ -6,8 +6,7 @@ import ru.job4j.cars.entity.Post;
 import ru.job4j.cars.repository.postrepository.PostRepository;
 
 /**
- * Данный класс реализует функционал администрирования объявлений в базе,
- * доступный admin сайта
+ * Данный класс реализует функционал администрирования объявлений сайта
  * @author Maxim Tsurkanov
  */
 @Service

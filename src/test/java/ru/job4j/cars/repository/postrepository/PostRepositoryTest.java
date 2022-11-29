@@ -66,7 +66,7 @@ public class PostRepositoryTest {
                 "Sedan",
                 2018,
                 30000,
-                new Engine("1.6","AT", "front-wheel", 123),
+                new Engine("1.6", "AT", "front-wheel", 123),
                 new byte[]{}
         );
         addBrandToCar(brandId1, car1);
@@ -85,7 +85,8 @@ public class PostRepositoryTest {
                 )
         );
         String description1 = "Sale1";
-        post1 = addPostToDb(user1, car1, description1 ,priceHistories1, participants1);
+        post1 = addPostToDb(user1, car1, description1, priceHistories1,
+                participants1);
         User user2 = new User("name2", "phone2", "email2",
                 "login2", "password2");
         List<User> participants2 = List.of(user1);
@@ -95,7 +96,7 @@ public class PostRepositoryTest {
                 "Hatchback",
                 2015,
                 200000,
-                new Engine("2.0","MT", "front-wheel", 150),
+                new Engine("2.0", "MT", "front-wheel", 150),
                 new byte[]{}
         );
         addBrandToCar(brandId2, car2);
@@ -124,7 +125,8 @@ public class PostRepositoryTest {
 
         );
         String description2 = "Sale2";
-        post2 = addPostToDb(user2, car2, description2 ,priceHistories2, participants2);
+        post2 = addPostToDb(user2, car2, description2, priceHistories2,
+                participants2);
     }
 
     @After
@@ -144,25 +146,22 @@ public class PostRepositoryTest {
                 postFromDb.get().getParticipants().iterator();
         User participant = iterator.next();
         assertThat(
-                    postFromDb.get().getUser().getLogin()
-                    , is(post2.getUser().getLogin())
+                    postFromDb.get().getUser().getLogin(),
+                    is(post2.getUser().getLogin())
         );
         assertThat(
-                     postFromDb.get().getCar().getBrand().getName()
-                    , is(post2.getCar().getBrand().getName())
+                     postFromDb.get().getCar().getBrand().getName(),
+                     is(post2.getCar().getBrand().getName())
         );
         assertThat(
-                    postFromDb.get().getCar().getEngine().getTransmission()
-                    , is(post2.getCar().getEngine().getTransmission())
+                    postFromDb.get().getCar().getEngine().getTransmission(),
+                    is(post2.getCar().getEngine().getTransmission())
         );
         assertThat(
-                     postFromDb.get().getPriceHistoryList().get(1).getPrice()
-                    , is(350000)
+                     postFromDb.get().getPriceHistoryList().get(1).getPrice(),
+                     is(350000)
         );
-        assertThat(
-                     participant.getLogin()
-                    , is("login1")
-        );
+        assertThat(participant.getLogin(), is("login1"));
     }
 
     @Test
@@ -320,14 +319,14 @@ public class PostRepositoryTest {
     private void addOwnersToCar(User user, Car car, List<Driver> owners) {
         owners.forEach(driver -> {
                                     driver.setUser(user);
-                                    car.addCarDriver(driver);}
+                                    car.addCarDriver(driver); }
         );
     }
 
     private void addPriceHistoriesToPost(List<PriceHistory> priceHistories, Post post) {
         priceHistories.forEach(ph -> {
                                         ph.setPost(post);
-                                        post.addPriceHistoryToList(ph);}
+                                        post.addPriceHistoryToList(ph); }
         );
     }
 

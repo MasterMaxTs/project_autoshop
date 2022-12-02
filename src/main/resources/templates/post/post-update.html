@@ -86,7 +86,7 @@
                     <br><br>
                     <label for="price"><b>Цена (править)</b></label>
                     <br>
-                    <input type="text" name="price" id="price" th:with="list=${post.priceHistoryList}"
+                    <input type="text" name="price" id="price" th:with="list=${post.priceList}"
                            th:value="${list.get(#lists.size(list)-1).price}" size="5" required/>
                     <br><br>
                 </fieldset>

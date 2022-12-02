@@ -80,7 +80,7 @@
                 <label for="login" class="visually-hidden">Логин</label>
                 <br>
                 <input type="text" id="login" placeholder="Введите login" th:field="*{login}" required>
-                <span th:if="${msgFail} != null" th:text="${msgFail}" style="color: crimson"></span>
+                <p th:if="${msgFail} != null" th:text="${msgFail}" style="color: crimson"></p>
                 <br><br>
                 <label for="pwd" class="visually-hidden">Пароль</label>
                 <br>

@@ -172,7 +172,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="price,iterStat :${post.priceHistoryList}">
+            <tr th:each="price,iterStat :${post.priceList}">
                 <td th:text="${iterStat.count}"></td>
                 <td th:text="${price.price}"></td>
                 <td th:text="${#temporals.format(price.created, 'dd-MM-yyyy HH:mm')}"></td>
@@ -242,7 +242,7 @@
                         </table>
                     </td>
                     <td th:with="isCurrentUser=${post.user.name == user.name}">
-                        <p th:with="list=${post.priceHistoryList}" th:text="${list.get(#lists.size(list)-1).price}"></p>
+                        <p th:with="list=${post.priceList}" th:text="${list.get(#lists.size(list)-1).price}"></p>
                         <br>
                         <div style="float: right">
                             <form th:action="@{|/posts/${post.id}/price-history|}" method="GET">

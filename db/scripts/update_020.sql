@@ -1,6 +1,0 @@
-CREATE TABLE IF NOT EXISTS price_history
-(
-    id      SERIAL PRIMARY KEY,
-    price  BIGINT NOT NULL,
-    created TIMESTAMP WITHOUT TIME ZONE DEFAULT now()
-);

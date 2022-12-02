@@ -208,7 +208,7 @@
                     </p>
                 </div>
             </td>
-            <td th:with="list=${post.priceHistoryList}" th:text="${list.get(#lists.size(list)-1).price}"></td>
+            <td th:with="list=${post.priceList}" th:text="${list.get(#lists.size(list)-1).price}"></td>
         </tr>
         </tbody>
     </table>

@@ -6,18 +6,19 @@ import ru.job4j.cars.model.Post;
 import ru.job4j.cars.repository.posts.PostRepository;
 
 /**
- * Данный класс реализует функционал администрирования объявлений сайта
+ * Данный класс реализует функционал администрирования публикаций
+ * пользователей сайта
  * @author Maxim Tsurkanov
  */
 @Service
 @AllArgsConstructor
 public class AdminPostServiceImpl implements AdminPostService {
 
+    /**
+     * Делегирование выполнения CRUD-операций хранилищу публикаций
+     */
     private PostRepository store;
 
-    /**
-     * Удалить из базы все объявления, попавшие в архив
-     */
     @Override
     public void deleteAllArchivedPosts() {
         store.findAll().stream()

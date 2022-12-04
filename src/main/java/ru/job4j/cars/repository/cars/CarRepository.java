@@ -1,7 +1,11 @@
 package ru.job4j.cars.repository.cars;
 
 import ru.job4j.cars.model.Car;
-import ru.job4j.cars.repository.ManageRepository;
+import ru.job4j.cars.repository.Repository;
 
-public interface CarRepository extends ManageRepository<Car> {
+/**
+ * Хранилище автомобилей
+ * @see ru.job4j.cars.model.Car
+ */
+public interface CarRepository extends Repository<Car> {
 }

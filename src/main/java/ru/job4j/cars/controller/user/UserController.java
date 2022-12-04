@@ -68,11 +68,11 @@ public class UserController implements SessionControl {
             User savedUser = userService.create(user);
             session.setAttribute("user", savedUser);
         } catch (IllegalUserNameException exception) {
-            return getRedirectDueToInvalidUserName(flag, ra);
+            return getRedirectDueToInvalidUserName(flag, ra, exception);
         } catch (IllegalUserEmailException exception) {
-            return getRedirectDueToInvalidEmailName(flag, ra);
+            return getRedirectDueToInvalidEmailName(flag, ra, exception);
         } catch (IllegalUserLoginException exception) {
-            return getRedirectDueToInvalidLoginName(flag, ra);
+            return getRedirectDueToInvalidLoginName(flag, ra, exception);
         }
         return "user/user-registration-confirm";
     }
@@ -148,26 +148,35 @@ public class UserController implements SessionControl {
         return "redirect:/loginPage";
     }
 
-    private String getRedirectDueToInvalidLoginName(Boolean flag, RedirectAttributes ra) {
-        String msg = "Пользователь с таким login уже существует в БД! "
-                + "Придумайте другой login!";
-        ra.addAttribute("msgLogin", msg);
+    private String getRedirectDueToInvalidLoginName(Boolean flag,
+                                                    RedirectAttributes ra,
+                                                    Exception ex) {
+        ra.addAttribute(
+                "msgLogin",
+                ex.getMessage() + "Придумайте другой login!"
+        );
         ra.addAttribute("flag", flag);
         return "redirect:/formAddUser";
     }
 
-    private String getRedirectDueToInvalidEmailName(Boolean flag, RedirectAttributes ra) {
-        String msg = "Пользователь с таким email уже существует в БД! "
-                + "Введите другой email!";
-        ra.addAttribute("msgEmail", msg);
+    private String getRedirectDueToInvalidEmailName(Boolean flag,
+                                                    RedirectAttributes ra,
+                                                    Exception ex) {
+        ra.addAttribute(
+                "msgEmail",
+                ex.getMessage() + "Введите другой email!"
+        );
         ra.addAttribute("flag", flag);
         return "redirect:/formAddUser";
     }
 
-    private String getRedirectDueToInvalidUserName(Boolean flag, RedirectAttributes ra) {
-        String msg = String.format("Пользователь с именем '%s' не может "
-                + "быть создан в системе! Придумайте другое имя!", GUEST);
-        ra.addAttribute("msgName", msg);
+    private String getRedirectDueToInvalidUserName(Boolean flag,
+                                                   RedirectAttributes ra,
+                                                   Exception ex) {
+        ra.addAttribute(
+                "msgName",
+                ex.getMessage() + "Придумайте другое имя!"
+        );
         ra.addAttribute("flag", flag);
         return "redirect:/formAddUser";
     }

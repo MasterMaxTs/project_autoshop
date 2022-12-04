@@ -27,12 +27,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * Класс используется для выполнения интеграционных тестов при выявлении
+ * правильного взаимодействия приложения с хранилищем публикаций
+ */
 public class PostRepositoryTest {
 
     private static SimpleDateFormat sdf;
@@ -40,7 +43,7 @@ public class PostRepositoryTest {
     private CrudRepository crudRepository;
     private UserRepository userRepository;
     private PostRepository postRepository;
-    private PostRepoFilter postRepoFilter;
+    private PostFilterRepository postFilterRepository;
     private CarBrandRepository carBrandRepository;
     private CarRepository carRepository;
     private DriverRepository driverRepository;
@@ -48,12 +51,21 @@ public class PostRepositoryTest {
     private Post post1;
     private Post post2;
 
+    /**
+     * Инициализация объекта SessionFactory,
+     * иницализация объекта SimpleDateFormat на весь период тестирования
+     */
     @BeforeClass
     public static void init() {
         sessionFactory = new Job4jCarsApplication().sf();
         sdf = new SimpleDateFormat("dd-MM-yyyy");
     }
 
+    /**
+     * Инициализация хранилищ пользователей и публикаций, вставка начальных
+     * данных до выполнения тестов: добавление двух публикаций от двух разных
+     * пользователей
+     */
     @Before
     public void whenSetUpThatAddTwoPostsIntoDb() throws ParseException {
         initRepositories();
@@ -129,6 +141,10 @@ public class PostRepositoryTest {
                 participants2);
     }
 
+    /**
+     * Очистка всех данных из связанных тестируемых таблиц H2Database после
+     * завершения каждого теста
+     */
     @After
     public void wipeTables() {
         deleteAllFromPriceHistoryTable();
@@ -138,32 +154,41 @@ public class PostRepositoryTest {
         userRepository.deleteAll();
     }
 
+    /**
+     * Тест проверяет сценарий корректного сохранения публикаций в
+     * хранилище публикаций и правильного извлечения из него
+     */
     @Test
     public void whenCreateNewPostThanPostRepoHasSamePost() {
-        Optional<Post> postFromDb = postRepository.findById(post2.getId());
-        assertTrue(postFromDb.isPresent());
+        Optional<Post> postFromDb1 = postRepository.findById(post1.getId());
+        Optional<Post> postFromDb2 = postRepository.findById(post2.getId());
+        assertTrue(postFromDb1.isPresent() && postFromDb2.isPresent());
         Iterator<User> iterator =
-                postFromDb.get().getParticipants().iterator();
+                postFromDb2.get().getParticipants().iterator();
         User participant = iterator.next();
         assertThat(
-                    postFromDb.get().getUser().getLogin(),
-                    is(post2.getUser().getLogin())
+                    postFromDb1.get().getUser().getLogin(),
+                    is(post1.getUser().getLogin())
         );
         assertThat(
-                     postFromDb.get().getCar().getBrand().getName(),
-                     is(post2.getCar().getBrand().getName())
+                postFromDb2.get().getCar().getBrand().getName(),
+                is(post2.getCar().getBrand().getName())
         );
         assertThat(
-                    postFromDb.get().getCar().getEngine().getTransmission(),
-                    is(post2.getCar().getEngine().getTransmission())
+                    postFromDb1.get().getCar().getEngine().getTransmission(),
+                    is(post1.getCar().getEngine().getTransmission())
         );
         assertThat(
-                     postFromDb.get().getPriceList().get(1).getPrice(),
+                     postFromDb2.get().getPriceList().get(1).getPrice(),
                      is(350000)
         );
         assertThat(participant.getLogin(), is("login1"));
     }
 
+    /**
+     * Тест проверяет сценарий корректного обновления публикации в
+     * хранилище публикаций
+     */
     @Test
     public void whenUpdatePostThanPostRepoHasSamePost() {
         int postId = post1.getId();
@@ -181,6 +206,10 @@ public class PostRepositoryTest {
         assertThat(rsl.get().getText(), is("New sale description"));
     }
 
+    /**
+     * Тест проверяет сценарий корректного удаления публикаций из
+     * хранилища публикаций
+     */
     @Test
     public void whenDeleteAllPostsThanPostRepoHasEmpty() {
         postRepository.delete(post1);
@@ -191,6 +220,10 @@ public class PostRepositoryTest {
         assertTrue(listOwners.isEmpty());
     }
 
+    /**
+     * Тест проверяет сценарий корректного удаления всех архивных публикаций из
+     * хранилища публикаций
+     */
     @Test
     public void whenAdminDeleteAllArchivedPostsThanTheyAreNotInPostRepo() {
         post1.setSold(true);
@@ -200,6 +233,10 @@ public class PostRepositoryTest {
         assertTrue(postRepository.findById(post2.getId()).isPresent());
     }
 
+    /**
+     * Тест проверяет сценарий корректного нахождения всех публикаций,
+     * принадлежащих пользователю, в хранилище публикаций
+     */
     @Test
     public void whenFindAllPostsByUserIdThanGetUserPost() {
         List<Post> rsl =
@@ -209,6 +246,10 @@ public class PostRepositoryTest {
         assertThat(rsl.size(), is(1));
     }
 
+    /**
+     * Тест проверяет сценарий корректного нахождения всех публикаций
+     * в хранилище публикаций
+     */
     @Test
     public void whenCreateSomePostsThanPostRepoHasAll() {
         List<Post> rsl = postRepository.findAll();
@@ -217,6 +258,10 @@ public class PostRepositoryTest {
         assertThat(rsl.size(), is(2));
     }
 
+    /**
+     * Тест проверяет сценарий корректного нахождения отфильтрованных за
+     * минувшие сутки публикаций в хранилище публикаций
+     */
     @Test
     public void whenFindAllPostsForLastDayThanGetFilteredPost() {
         int postId = post1.getId();
@@ -225,15 +270,19 @@ public class PostRepositoryTest {
         Post post1 = postFromDb.get();
         post1.setCreated(post1.getCreated().minusDays(2L));
         postRepository.update(post1);
-        List<Post> rsl = postRepoFilter.findAllForLastDay();
+        List<Post> rsl = postFilterRepository.findAllForLastDay();
         assertThat(rsl.size(), is(1));
         assertThat(rsl.get(0).getCar().getColor(), is("black"));
         assertThat(rsl.get(0).getText(), is("Sale2"));
     }
 
+    /**
+     * Тест проверяет сценарий корректного нахождения отфильтрованных по
+     * параметрам автомобиля публикаций в хранилище публикаций
+     */
     @Test
     public void whenFindAllPostsByParametersThanGetFilteredPost() {
-        List<Post> rsl = postRepoFilter.findAllByParameters(
+        List<Post> rsl = postFilterRepository.findAllByParameters(
                                                         "Toyota",
                                                         "Sedan",
                                                         2017,
@@ -249,9 +298,13 @@ public class PostRepositoryTest {
         assertThat(rsl.get(0).getCar().getEngine().getVolume(), is("1.6"));
     }
 
+    /**
+     * Тест проверяет сценарий корректного нахождения отфильтрованных по
+     * параметрам автомобиля публикаций в хранилище публикаций
+     */
     @Test
     public void whenFindAllPostsByParametersThanGetEmptyList() {
-        List<Post> rsl = postRepoFilter.findAllByParameters(
+        List<Post> rsl = postFilterRepository.findAllByParameters(
                                                         "Toyota",
                                                         "Sedan",
                                                         2020,
@@ -262,9 +315,13 @@ public class PostRepositoryTest {
         assertTrue(rsl.isEmpty());
     }
 
+    /**
+     * Тест проверяет сценарий корректного нахождения отфильтрованных по
+     * бренду автомобиля и цене публикаций в хранилище публикаций
+     */
     @Test
     public void whenFindAllPostsByCarBrandAndPriceThanGetFilteredPost() {
-        List<Post> rsl = postRepoFilter.findAllByCarBrandAndPrice(
+        List<Post> rsl = postFilterRepository.findAllByCarBrandAndPrice(
                 "Ford", 300000, 600000
         );
         assertThat(rsl.size(), is(1));
@@ -272,50 +329,68 @@ public class PostRepositoryTest {
         assertThat(rsl.get(0).getPriceList().get(1).getPrice(), is(350000));
     }
 
+    /**
+     * Тест проверяет сценарий корректного нахождения отфильтрованных по
+     * бренду автомобиля и цене публикаций в хранилище публикаций
+     */
     @Test
     public void whenFindAllPostsByCarBrandAndPriceThanGetEmptyList() {
-        List<Post> rsl = postRepoFilter.findAllByCarBrandAndPrice(
+        List<Post> rsl = postFilterRepository.findAllByCarBrandAndPrice(
                 "Ford", 400000, 600000
         );
         assertTrue(rsl.isEmpty());
     }
 
+    /**
+     * Тест проверяет сценарий корректного нахождения архивных публикаций в
+     * хранилище публикаций
+     */
     @Test
     public void whenAddPostToArchiveThanPostRepoHasSameArchivedPost() {
         post1.setSold(true);
         postRepository.update(post1);
-        List<Post> rsl = findAllArchivedPosts();
+        List<Post> rsl = postRepository.findAllArchivedPosts();
         assertThat(rsl.size(), is(1));
         assertThat(rsl.get(0).getCar().getBrand().getId(), is(1));
     }
 
+    /**
+     * Выполняет инициализацию репозиториев и сервисов
+     */
     private void initRepositories() {
         crudRepository = new CrudRepositoryImpl(sessionFactory);
         userRepository = new UserRepositoryImpl(crudRepository);
         postRepository = new PostRepositoryImpl(crudRepository);
-        postRepoFilter = new PostRepositoryImpl(crudRepository);
+        postFilterRepository = new PostRepositoryImpl(crudRepository);
         carBrandRepository = new CarBrandRepositoryImpl(crudRepository);
         carRepository = new CarRepositoryImpl(crudRepository);
         driverRepository = new DriverRepositoryImpl(crudRepository);
         adminPostService = new AdminPostServiceImpl(postRepository);
     }
 
+    /**
+     * Выполняет удаление всех данных из таблицы price_history
+     */
     private void deleteAllFromPriceHistoryTable() {
         crudRepository.run("delete from Price", Map.of());
     }
 
-    private List<Post> findAllArchivedPosts() {
-        return postRepository.findAll()
-                                    .stream()
-                                    .filter(Post::isSold)
-                                    .collect(Collectors.toList());
-    }
-
+    /**
+     * Устанавливает бренд автомобилю
+     * @param brandId id бренда
+     * @param car автомобиль
+     */
     private void addBrandToCar(int brandId, Car car) {
         Optional<Brand> carBrandFromDB = carBrandRepository.findById(brandId);
         carBrandFromDB.ifPresent(car::setBrand);
     }
 
+    /**
+     * Устанавливает автовладельцев автомобиля
+     * @param user пользователь
+     * @param car автомобиль
+     * @param owners список автовладельцев
+     */
     private void addOwnersToCar(User user, Car car, List<Driver> owners) {
         owners.forEach(driver -> {
                                     driver.setUser(user);
@@ -323,6 +398,11 @@ public class PostRepositoryTest {
         );
     }
 
+    /**
+     * Добавляет в публикацию хронологию изменения цены продажи
+     * @param priceHistories список цен
+     * @param post публикация
+     */
     private void addPriceHistoriesToPost(List<Price> priceHistories, Post post) {
         priceHistories.forEach(ph -> {
                                         ph.setPost(post);
@@ -330,6 +410,15 @@ public class PostRepositoryTest {
         );
     }
 
+    /**
+     * Создаёт публикацию в базе данных
+     * @param user пользователь
+     * @param car автомобиль
+     * @param description описание публикации
+     * @param priceHistories список цен
+     * @param participants список подписчиков
+     * @return Создаёт публикацию в базе данных
+     */
     private Post addPostToDb(User user, Car car, String description,
                              List<Price> priceHistories,
                              List<User> participants) {

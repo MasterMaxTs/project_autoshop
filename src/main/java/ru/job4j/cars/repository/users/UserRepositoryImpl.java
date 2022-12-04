@@ -9,63 +9,52 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Реализация хранилища пользователей сайта
+ */
 @Repository
 @AllArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
 
+    /**
+     * Делегирование выполнения CRUD-операций
+     * @see ru.job4j.cars.repository.crud.CrudRepositoryImpl
+     */
     private final CrudRepository crudRepository;
 
     /**
-     * Найти в базе всех зарегистрированных пользователей
-     * @return список пользователей
+     * @return список пользователей, отсортированных по времени
+     * регистрации на сайте от раннего к позднему
      */
     @Override
     public List<User> findAll() {
-        return crudRepository.query("from User", User.class);
+        return crudRepository.query(
+                "from User order by created desc",
+                User.class
+        );
     }
 
-    /**
-     * Добавить пользователя в базу
-     * @param user пользователь
-     * @return пользователь с id
-     */
     @Override
     public User create(User user) {
         crudRepository.run(session -> session.save(user));
         return user;
     }
 
-    /**
-     * Обновить данные пользователя в базе
-     * @param user пользователь
-     */
     @Override
     public void update(User user) {
         crudRepository.run(session -> session.merge(user));
     }
 
-    /**
-     * Удалить пользователя из базы
-     * @param user пользователь
-     */
     @Override
     public void delete(User user) {
         crudRepository.run(session -> session.delete(user));
     }
 
-    /**
-     * Удалить из базы всех пользователей
-     */
     @Override
     public void deleteAll() {
         crudRepository.run("delete from User", Map.of());
     }
 
-    /**
-     * Найти пользователя в базе по ID
-     * @param id пользователя
-     * @return пользователя в виде Optional
-     */
     @Override
     public Optional<User> findById(int id) {
         return crudRepository.optional(
@@ -75,11 +64,6 @@ public class UserRepositoryImpl implements UserRepository {
         );
     }
 
-    /**
-     * Найти пользователя в базе по login и password
-     * @param user пользователь
-     * @return пользователя в виде Optional
-     */
     @Override
     public Optional<User> findByLoginAndPassword(User user) {
         return crudRepository.optional(
@@ -89,11 +73,6 @@ public class UserRepositoryImpl implements UserRepository {
         );
     }
 
-    /**
-     * Найти пользователя в базе по login
-     * @param user пользователь
-     * @return пользователя в виде Optional
-     */
     @Override
     public Optional<User> findByLogin(User user) {
         return crudRepository
@@ -104,11 +83,6 @@ public class UserRepositoryImpl implements UserRepository {
                 );
     }
 
-    /**
-     * Найти пользователя в базе по email
-     * @param user пользователь
-     * @return пользователя в виде Optional
-     */
     @Override
     public Optional<User> findByEmail(User user) {
         return crudRepository

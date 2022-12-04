@@ -11,10 +11,16 @@ import ru.job4j.cars.repository.users.UserRepository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Реализация сервиса пользователей
+ */
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
+    /**
+     * Делегирование выполнения CRUD-операций хранилищу пользователей
+     */
     private final UserRepository store;
 
     @Override
@@ -24,27 +30,27 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(User user) {
-        Optional<User> userOptional = store.findByEmail(user);
+        Optional<User> userOptional = findByEmail(user);
         if (user.getName().equals(GUEST)) {
             throw new IllegalUserNameException(
                     String.format(
-                            "The new user named '%s' cannot be stored in the "
-                                    + "database", user.getName())
+                            "Пользователь с введенным именем '%s'"
+                                    + "не может быть зарегистрирован", user.getName())
             );
         }
         if (userOptional.isPresent()) {
             throw new IllegalUserEmailException(
                     String.format(
-                            "The new user with email '%s' cannot be stored in"
-                                    + " the database", user.getEmail())
+                            "Пользователь с введенным email '%s' уже существует"
+                                    + " и не может быть зарегистрирован", user.getEmail())
             );
         }
-        userOptional = store.findByLogin(user);
+        userOptional = findByLogin(user);
         if (userOptional.isPresent()) {
             throw new IllegalUserLoginException(
                     String.format(
-                            "The new user with login '%s' cannot be stored in"
-                                    + " the database", user.getLogin())
+                            "Пользователь с введенным login '%s' уже существует"
+                    + " и не может быть зарегистрирован", user.getEmail())
             );
         }
         return store.create(user);

@@ -17,7 +17,7 @@ import ru.job4j.cars.service.car.CarService;
 import ru.job4j.cars.service.car.carbrand.CarBrandService;
 import ru.job4j.cars.service.driver.DriverService;
 import ru.job4j.cars.service.engine.EngineService;
-import ru.job4j.cars.service.post.PostFilter;
+import ru.job4j.cars.service.post.PostFilterService;
 import ru.job4j.cars.service.post.PostService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,12 +28,18 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Контроллер публикаций
+ */
 @Controller
 @AllArgsConstructor
 public class PostController implements SessionControl {
 
+    /**
+     * Ссылки на слои сервисов
+     */
     private final PostService postService;
-    private final PostFilter postFilter;
+    private final PostFilterService postFilterService;
     private final EngineService engineService;
     private final CarService carService;
     private final CarBrandService carBrandService;
@@ -51,7 +57,7 @@ public class PostController implements SessionControl {
     }
 
     @GetMapping("/posts")
-    public String all(Model model) {
+    public String allUnsold(Model model) {
         List<Post> posts = postService.findAll()
                                       .stream()
                                       .filter(p -> !p.isSold())
@@ -64,11 +70,7 @@ public class PostController implements SessionControl {
 
     @GetMapping("/posts/archive")
     public String allArchive(Model model) {
-        List<Post> posts = postService.findAll()
-                                      .stream()
-                                      .filter(Post::isSold)
-                                      .collect(Collectors.toList());
-        model.addAttribute("posts", posts);
+        model.addAttribute("posts", postService.findAllArchivedPosts());
         model.addAttribute("brands", carBrandService.findAll());
         return "/post/post-all-archived";
     }
@@ -151,11 +153,9 @@ public class PostController implements SessionControl {
     @GetMapping("/posts/subscriptions")
     public String allSubscriptionsByUser(Model model) {
         User user = (User) model.getAttribute("user");
-        List<Post> subsPosts = postService.findAll()
-                                    .stream()
-                                    .filter(p -> p.getParticipants().contains(user))
-                                    .collect(Collectors.toList());
-        model.addAttribute("subs", subsPosts);
+        model.addAttribute(
+                "subs", postService.findAllFavoritePostsByUser(user)
+        );
         model.addAttribute("brands", carBrandService.findAll());
         return "post/post-all-subscriptions";
     }
@@ -177,7 +177,7 @@ public class PostController implements SessionControl {
     @GetMapping("/posts/filter/last_day")
     public String allForLastDay(Model model) {
         String message = "Отфильтрованные за сутки объявления";
-        model.addAttribute("posts", postFilter.findAllForLastDay());
+        model.addAttribute("posts", postFilterService.findAllForLastDay());
         model.addAttribute("brands", carBrandService.findAll());
         model.addAttribute("filter2", true);
         model.addAttribute("msg", message);
@@ -198,7 +198,7 @@ public class PostController implements SessionControl {
                                             "fUprice", upperPrice);
         model.addAttribute(
                 "posts",
-                postFilter.findAllByCarBrandAndPrice(
+                postFilterService.findAllByCarBrandAndPrice(
                                                 brand,
                                                 Integer.parseInt(lowerPrice),
                                                 Integer.parseInt(upperPrice)
@@ -227,7 +227,7 @@ public class PostController implements SessionControl {
                                             "fMileage", mileage,
                                             "fTransmission", transmission,
                                             "fVolume", volume);
-        List<Post> filteredPosts = postFilter.findAllByParameters(brand,
+        List<Post> filteredPosts = postFilterService.findAllByParameters(brand,
                                                         bodyType,
                                                         Integer.parseInt(modelYear),
                                                         Integer.parseInt(mileage),

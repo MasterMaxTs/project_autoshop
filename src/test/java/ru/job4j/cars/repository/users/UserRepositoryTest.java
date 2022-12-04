@@ -16,28 +16,46 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
-
+/**
+ * Класс используется для выполнения интеграционных тестов при выявлении
+ * правильного взаимодействия приложения с хранилищем пользователей
+ */
 public class UserRepositoryTest {
 
     private static SessionFactory sessionFactory;
     private UserRepository userRepository;
 
+    /**
+     * Инициализация финального объекта SessionFactory на весь период
+     * тестирования
+     */
     @BeforeClass
     public static void initSessionFactory() {
         sessionFactory = new Job4jCarsApplication().sf();
     }
 
+    /**
+     * Инициализация хранилища пользователей до выполнения тестов
+     */
     @Before
     public void whenSetUp() {
         CrudRepository crudRepo = new CrudRepositoryImpl(sessionFactory);
         userRepository = new UserRepositoryImpl(crudRepo);
     }
 
+    /**
+     * Очистка всех данных в тестируемой таблице H2Database после завершения
+     * каждого теста
+     */
     @After
     public void wipeTable() {
         userRepository.deleteAll();
     }
 
+    /**
+     * Тест проверяет сценарий корректного сохранения двух пользователей в
+     * хранилище пользователей и правильного извлечения из него
+     */
     @Test
     public void whenCreateSomeUsersThanUserRepoHasAll() {
         User user1 = new User("name1", "phone1", "email1",
@@ -52,6 +70,10 @@ public class UserRepositoryTest {
         assertThat(rsl.get(1).getId(), is(user2.getId()));
     }
 
+    /**
+     * Тест проверяет сценарий корректного сохранения одного пользователя в
+     * хранилище пользователей и правильное извлечение из него
+     */
     @Test
     public void whenCreateNewUserThanUserRepoHasSameUser() {
         User user = new User("name", "phone", "email",
@@ -62,6 +84,10 @@ public class UserRepositoryTest {
         assertThat(rsl.get().getLogin(), is("login"));
     }
 
+    /**
+     * Тест проверяет сценарий корректного обновления данных о пользователе
+     * в хранилище пользователей
+     */
     @Test
     public void whenUpdateUserThanUserRepoHasSameUser() {
         User user = new User("name", "phone", "email",
@@ -72,9 +98,14 @@ public class UserRepositoryTest {
         userFromDb.ifPresent(u -> user.setPassword("newPass"));
         userRepository.update(user);
         Optional<User> rsl = userRepository.findById(id);
+        assertTrue(rsl.isPresent());
         assertThat(rsl.get().getPassword(), is("newPass"));
     }
 
+    /**
+     * Тест проверяет сценарий корректного удаления пользователя
+     * из хранилища пользователей
+     */
     @Test
     public void whenDeleteSingleUserThanUserRepoHasEmpty() {
         User user = new User("name", "phone", "email",
@@ -85,16 +116,24 @@ public class UserRepositoryTest {
         assertTrue(rsl.isEmpty());
     }
 
-
+    /**
+     * Тест проверяет сценарий, что результатом извлечения пользователя с
+     * корректным id из хранилища пользователей является Optional.of(user)
+     */
     @Test
     public void whenFindUserByIdThanUserRepoHasSameUser() {
         User user = new User("name", "phone", "email",
                 "login", "password");
         userRepository.create(user);
         Optional<User> rsl = userRepository.findById(user.getId());
+        assertTrue(rsl.isPresent());
         assertThat(rsl.get().getLogin(), is("login"));
     }
 
+    /**
+     * Тест проверяет сценарий, что результатом извлечения пользователя с
+     * некорректным id из хранилища пользователей является Optional.empty()
+     */
     @Test
     public void whenFindUserByIncorrectIdThanUserRepoHasEmpty() {
         User user = new User("name", "phone", "email",
@@ -105,16 +144,24 @@ public class UserRepositoryTest {
         assertTrue(rsl.isEmpty());
     }
 
+    /**
+     * Тест проверяет сценарий, что результатом извлечения пользователя с
+     * корректным login из хранилища пользователей является Optional.of(user)
+     */
     @Test
     public void whenFindUserByLoginThanUserRepoIsNotEmpty() {
         User user = new User("name", "phone", "email",
                 "login", "password");
         userRepository.create(user);
-        user.setLogin("login");
         Optional<User> rsl = userRepository.findByLogin(user);
         assertTrue(rsl.isPresent());
+        assertThat(rsl.get().getLogin(), is("login"));
     }
 
+    /**
+     * Тест проверяет сценарий, что результатом извлечения пользователя с
+     * некорректным login из хранилища пользователей является Optional.empty()
+     */
     @Test
     public void whenFindUserByIncorrectLoginThanUserRepoHasEmpty() {
         User user = new User("name", "phone", "email",
@@ -125,16 +172,24 @@ public class UserRepositoryTest {
         assertTrue(rsl.isEmpty());
     }
 
+    /**
+     * Тест проверяет сценарий, что результатом извлечения пользователя с
+     * корректным email из хранилища пользователей является Optional.of(user)
+     */
     @Test
     public void whenFindUserByCorrectEmailThanUserRepoIsNotEmpty() {
         User user = new User("name", "phone", "email",
                 "login", "password");
-        user.setEmail("email");
         userRepository.create(user);
         Optional<User> rsl = userRepository.findByEmail(user);
         assertTrue(rsl.isPresent());
+        assertThat(rsl.get().getEmail(), is("email"));
     }
 
+    /**
+     * Тест проверяет сценарий, что результатом извлечения пользователя с
+     * некорректным email из хранилища пользователей является Optional.empty()
+     */
     @Test
     public void whenFindUserByIncorrectEmailThanUserRepoHasEmpty() {
         User user = new User("name", "phone", "email",

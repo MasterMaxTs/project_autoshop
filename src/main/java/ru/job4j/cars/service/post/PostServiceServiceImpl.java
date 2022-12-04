@@ -3,22 +3,47 @@ package ru.job4j.cars.service.post;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.cars.model.Post;
-import ru.job4j.cars.repository.posts.PostRepoFilter;
+import ru.job4j.cars.model.User;
+import ru.job4j.cars.repository.posts.PostFilterRepository;
 import ru.job4j.cars.repository.posts.PostRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+/**
+ * Реализация сервиса публикаций с функционалом фильтрации
+ */
 @Service
 @AllArgsConstructor
-public class PostServiceImpl implements PostService, PostFilter {
+public class PostServiceServiceImpl implements PostService, PostFilterService {
 
+    /**
+     * Делегирование выполнения CRUD-операций хранилищу публикаций
+     */
     private final PostRepository store;
-    private final PostRepoFilter storeFilter;
+
+    /**
+     * Делегирование выполнения CRUD-операций хранилищу отфильтрованных
+     * публикаций
+     */
+    private final PostFilterRepository storeFilter;
 
     @Override
     public List<Post> findAllByUserId(int id) {
         return store.findAllByUserId(id);
+    }
+
+    @Override
+    public List<Post> findAllArchivedPosts() {
+        return store.findAllArchivedPosts();
+    }
+
+    @Override
+    public List<Post> findAllFavoritePostsByUser(User user) {
+        return findAll().stream()
+                        .filter(p -> p.getParticipants().contains(user))
+                        .collect(Collectors.toList());
     }
 
     @Override

@@ -8,10 +8,16 @@ import ru.job4j.cars.repository.cars.CarRepository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Реализация сервиса автомобилей
+ */
 @Service
 @AllArgsConstructor
 public class CarServiceImpl implements CarService {
 
+    /**
+     * Делегирование выполнения CRUD-операций хранилищу автомобилей
+     */
     private final CarRepository store;
 
     @Override

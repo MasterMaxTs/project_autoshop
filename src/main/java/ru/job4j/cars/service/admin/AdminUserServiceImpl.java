@@ -16,11 +16,11 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class AdminUserServiceImpl implements AdminUserService {
 
+    /**
+     * Делегирование выполнения CRUD-операций хранилищу пользователей
+     */
     private final UserRepository store;
 
-    /**
-     * Найти в базе все заявки на удаление профелей пользователей
-     */
     @Override
     public List<User> findAllDeletionRequests() {
         return store.findAll()
@@ -29,10 +29,6 @@ public class AdminUserServiceImpl implements AdminUserService {
                             .collect(Collectors.toList());
     }
 
-    /**
-     * Удалить пользователя из базы
-     * @param user пользователь
-     */
     @Override
     public void delete(User user) {
         store.delete(user);

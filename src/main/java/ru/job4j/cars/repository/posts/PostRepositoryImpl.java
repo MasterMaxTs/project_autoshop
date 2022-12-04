@@ -10,17 +10,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Реализация хранилища публикаций на сайте с функционалом фильтрации
+ */
 @Repository
 @AllArgsConstructor
-public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
+public class PostRepositoryImpl implements PostRepository, PostFilterRepository {
 
+    /**
+     * Делегирование выполнения CRUD-операций
+     * @see ru.job4j.cars.repository.crud.CrudRepositoryImpl
+     */
     private final CrudRepository crudRepository;
 
     /**
-     * Найти в базе все объявления, опубликованные конкретным пользователем
-     * @param id id пользователя
-     * @return список объявлений пользователя, отсортированных по времени
-     * обновления
+     * @return список публикаций пользователя, отсортированных
+     * по времени обновления публикации в обратном порядке
      */
     @Override
     public List<Post> findAllByUserId(int id) {
@@ -32,8 +37,20 @@ public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
     }
 
     /**
-     * Найти в базе все объявления
-     * @return список объявлений, отсортированных по времени обновления
+     * @return список архивных публикаций пользователя, отсортированных
+     * по времени обновления публикации в обратном порядке
+     */
+    @Override
+    public List<Post> findAllArchivedPosts() {
+        return crudRepository.query(
+                "from Post where isSold = true order by updated desc",
+                Post.class
+        );
+    }
+
+    /**
+     * @return список всех публикаций, отсортированных
+     * по времени обновления публикации в обратном порядке
      */
     @Override
     public List<Post> findAll() {
@@ -42,48 +59,27 @@ public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
         );
     }
 
-    /**
-     * Сохранить объявление в базе
-     * @param post объявление
-     * @return объявление с id
-     */
     @Override
     public Post create(Post post) {
         crudRepository.run(session -> session.save(post));
         return post;
     }
 
-    /**
-     * Обновить объявление в базе
-     * @param post объявление
-     */
     @Override
     public void update(Post post) {
         crudRepository.run(session -> session.merge(post));
     }
 
-    /**
-     * Удалить объявление из базы
-     * @param post объявление
-     */
     @Override
     public void delete(Post post) {
         crudRepository.run(session -> session.delete(post));
     }
 
-    /**
-     * Удалить все объявления из базы
-     */
     @Override
     public void deleteAll() {
         crudRepository.run("delete from Post", Map.of());
     }
 
-    /**
-     * Найти объявление в базе по ID
-     * @param id id объявления
-     * @return объявление в виде Optional
-     */
     @Override
     public Optional<Post> findById(int id) {
         return crudRepository.optional(
@@ -94,9 +90,8 @@ public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
     }
 
     /**
-     * Отфильтровать и вывести из базы все объявления,
-     * опубликованные за сутки
-     * @return отфильтрованные за сутки объявления
+     * @return отфильтрованные объявления, опубликованные за сутки и
+     * отсортированные по времени обновления публикации в обратном порядке
      */
     @Override
     public List<Post> findAllForLastDay() {
@@ -111,9 +106,8 @@ public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
     }
 
     /**
-     * Отфильтровать и вывести из базы все объявления,
-     * отвещающие критериям поиска
-     * @return отфильтрованные по параметрам авто объявления
+     * @return отфильтрованные объявления по параметрам автомобиля и
+     * отсортированные по времени обновления публикации в обратном порядке
      */
     @Override
     public List<Post> findAllByParameters(String brand,
@@ -146,10 +140,9 @@ public class PostRepositoryImpl implements PostRepository, PostRepoFilter {
 
 
     /**
-     * Отфильтровать и вывести из базы все объявления,
-     * отвещающие критериям поиска
-     * @return отфильтрованные по марке авто и стоимости,
-     * указанной в виде диапазона, объявления
+     * @return отфильтрованные объявления по марке автомобиля и стоимости,
+     * указанной в виде диапазона, отсортированные по времени
+     * обновления публикации в обратном порядке
      */
     @Override
     public List<Post> findAllByCarBrandAndPrice(String brand, int minPrice,

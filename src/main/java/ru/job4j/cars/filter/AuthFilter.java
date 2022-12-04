@@ -9,9 +9,16 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+/**
+ * Фильтр проверки прав доступа пользователя к контенту сайта
+ */
 @Component
 public class AuthFilter implements Filter {
 
+    /**
+     * Сет из окончаний строк URI, при котором пользователю, не прошедшему
+     * аутентификацию на сайте, доступно содержимое запрошенного контента
+     */
     private static final Set<String> URI_SUFFIXES = Set.of("index",
                                                            "posts",
                                                            "formAddUser",
@@ -23,12 +30,31 @@ public class AuthFilter implements Filter {
                                                            "by_parameters",
                                                            "by_brand_price",
                                                            "archive");
+
+    /**
+     * Regular expression, применённое к URI, позволяющее пользователю,
+     * не прошедшему аутентификацию на сайте, просматривать контент в виде
+     * фотографий автомобилей
+     */
     private static final Pattern PATTERN = Pattern.compile("/postPhoto/.+");
 
+    /**
+     * Проверка соответствия URI доступности содержимого контента сайта для
+     * пользователя, не прошедшего аутентификацию
+     * @param uri URI
+     * @return результат проверки
+     */
     private boolean isEnds(String uri) {
-        return URI_SUFFIXES.stream().anyMatch(uri::endsWith);
+        return URI_SUFFIXES.stream().anyMatch(uri::endsWith)
+                || PATTERN.matcher(uri).matches();
     }
 
+    /**
+     * Реализация метода фильтрации
+     * @param request объект запроса в виде HttpServletRequest
+     * @param response объект ответа в виде HttpServletResponse
+     * @param chain объект FilterChain
+     */
     @Override
     public void doFilter(ServletRequest request,
                          ServletResponse response,
@@ -36,7 +62,7 @@ public class AuthFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
         String uri = req.getRequestURI();
-        if (isEnds(uri) || PATTERN.matcher(uri).matches()) {
+        if (isEnds(uri)) {
             chain.doFilter(req, res);
             return;
         }
@@ -45,6 +71,5 @@ public class AuthFilter implements Filter {
             return;
         }
         chain.doFilter(req, res);
-
     }
 }

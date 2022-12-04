@@ -8,10 +8,16 @@ import ru.job4j.cars.repository.drivers.DriverRepository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Реализация сервиса автовладельцев
+ */
 @Service
 @AllArgsConstructor
 public class DriverServiceImpl implements DriverService {
 
+    /**
+     * Делегирование выполнения CRUD-операций хранилищу автовладельцев
+     */
     private final DriverRepository store;
 
     @Override

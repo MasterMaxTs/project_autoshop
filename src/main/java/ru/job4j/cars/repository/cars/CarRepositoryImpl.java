@@ -9,10 +9,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Реализация хранилища автомобилей на сайте
+ */
 @Repository
 @AllArgsConstructor
 public class CarRepositoryImpl implements CarRepository {
 
+    /**
+     * Делегирование выполнения CRUD-операций
+     * @see ru.job4j.cars.repository.crud.CrudRepositoryImpl
+     */
     private final CrudRepository crudRepository;
 
     @Override

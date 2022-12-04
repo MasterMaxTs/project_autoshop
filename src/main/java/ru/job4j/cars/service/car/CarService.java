@@ -1,7 +1,10 @@
 package ru.job4j.cars.service.car;
 
 import ru.job4j.cars.model.Car;
-import ru.job4j.cars.service.ManageService;
+import ru.job4j.cars.service.Service;
 
-public interface CarService extends ManageService<Car> {
+/**
+ * Сервис автомобилей
+ */
+public interface CarService extends Service<Car> {
 }

@@ -105,4 +105,14 @@ public class User {
         this.login = login;
         this.password = password;
     }
+
+    /**
+     * Конструктор - создание нового объекта с определенными значениями.
+     * @param login логин учётной записи
+     * @param password пароль учётной записи
+     */
+    public User(String login, String password) {
+        this.login = login;
+        this.password = password;
+    }
 }

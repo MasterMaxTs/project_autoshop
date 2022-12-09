@@ -1,6 +1,6 @@
 package ru.job4j.cars.service.user;
 
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.job4j.cars.exception.IllegalUserEmailException;
 import ru.job4j.cars.exception.IllegalUserLoginException;
@@ -15,13 +15,16 @@ import java.util.Optional;
  * Реализация сервиса пользователей
  */
 @Service
-@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
     /**
      * Делегирование выполнения CRUD-операций хранилищу пользователей
      */
     private final UserRepository store;
+
+    public UserServiceImpl(@Qualifier("userRepositoryImpl") UserRepository store) {
+        this.store = store;
+    }
 
     @Override
     public List<User> findAll() {

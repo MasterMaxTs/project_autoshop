@@ -19,3 +19,7 @@ services:
   # Create a database
 before_script:
   - psql -c 'create database travis_ci_test;' -U postgres
+
+env:
+  global:
+    - CODECOV_TOKEN=b8e20aec-8684-4f9d-846a-67e73f666707

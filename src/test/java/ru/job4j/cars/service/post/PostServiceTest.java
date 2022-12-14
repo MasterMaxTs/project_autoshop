@@ -9,7 +9,8 @@ import ru.job4j.cars.repository.posts.PostRepository;
 
 import java.util.List;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -48,10 +49,10 @@ public class PostServiceTest {
         post2.setUser(user2);
         doReturn(List.of(post1, post2)).when(store).findAll();
         assertThat(
-                postService.findAllFavoritePostsByUser(user2).size())
-                .isEqualTo(1);
+                postService.findAllFavoritePostsByUser(user2).size(),
+                is(1));
         assertThat(
-                postService.findAllFavoritePostsByUser(user2).get(0))
-                .isEqualToComparingFieldByField(post1);
+                postService.findAllFavoritePostsByUser(user2).get(0).getUser().getLogin(),
+                is("login1"));
     }
 }

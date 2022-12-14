@@ -78,7 +78,6 @@
 
 - Тестирование:
   - junit v.4.13.2
-  - assertj-core v.3.23.1
   - hamcrest v.1.3
   - mockito-core v.4.9.0
   - Liquibase plugin v.3.6.2

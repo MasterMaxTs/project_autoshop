@@ -151,7 +151,7 @@ public class PostController implements SessionControl {
     }
 
     @GetMapping("/posts/subscriptions")
-    public String allSubscriptionsByUser(Model model) {
+    public String allUserSubscriptionsToPosts(Model model) {
         User user = (User) model.getAttribute("user");
         model.addAttribute(
                 "subs", postService.findAllFavoritePostsByUser(user)

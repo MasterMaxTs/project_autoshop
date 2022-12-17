@@ -46,16 +46,34 @@ public class PostController implements SessionControl {
     private final DriverService driverService;
     private final AdminPostService adminPostService;
 
+    /**
+     * Добавляет пользователя во все модели,
+     * определённые в контроллере публикаций
+     * @param session HttpSession
+     * @return пользователя из текущей сессии
+     */
     @ModelAttribute("user")
     User addUserToModels(HttpSession session) {
         return getUserFromSession(session);
     }
 
+    /**
+     * Перенаправляет на страницу со всеми публикациями
+     * @return перенаправление на страницу со всеми публикациями
+     * /posts
+     */
     @GetMapping("/index")
     public String index() {
         return "redirect:/posts";
     }
 
+    /**
+     * Добавляет в модель все публикации, помеченные в БД как непроданные,
+     * добавляет в модель список всех автобрендов, найденных в БД,
+     * для демонстрации пользователю
+     * @param model Model
+     * @return вид post/post-all
+     */
     @GetMapping("/posts")
     public String allUnsold(Model model) {
         List<Post> posts = postService.findAll()
@@ -64,10 +82,16 @@ public class PostController implements SessionControl {
                                       .collect(Collectors.toList());
         model.addAttribute("posts", posts);
         model.addAttribute("brands", carBrandService.findAll());
-        model.addAttribute("filter", "false");
         return "post/post-all";
     }
 
+    /**
+     * Добавляет в модель все публикации, помеченных в БД как проданные,
+     * добавляет в модель список всех автобрендов, найденных в БД,
+     * для демонстрации пользователю
+     * @param model Model
+     * @return вид /post/post-all-archived
+     */
     @GetMapping("/posts/archive")
     public String allArchive(Model model) {
         model.addAttribute("posts", postService.findAllArchivedPosts());
@@ -75,6 +99,11 @@ public class PostController implements SessionControl {
         return "/post/post-all-archived";
     }
 
+    /**
+     * Загружает на страницы сайта изображения автомобилей
+     * @param id id публикации
+     * @return ResponseEntity
+     */
     @GetMapping("/postPhoto/{postId}")
     public ResponseEntity<Resource> downloadPhoto(@PathVariable("postId") int id) {
         ResponseEntity<Resource> rsl = null;
@@ -90,6 +119,13 @@ public class PostController implements SessionControl {
         return rsl;
     }
 
+    /**
+     * Добавляет в модель публикацию, найденную в БД по id,
+     * для демонстрации пользователю
+     * @param id id публикации
+     * @param model Model
+     * @return вид /post/post-id
+     */
     @GetMapping("/posts/{postId}/edit")
     public String showPost(@PathVariable("postId") int id, Model model) {
         Optional<Post> postInDb = postService.findById(id);
@@ -97,6 +133,13 @@ public class PostController implements SessionControl {
         return "/post/post-id";
     }
 
+    /**
+     * Показывает в публикации информацию об автовладельцах
+     * в хронологическом порядке
+     * @param id id публикации
+     * @return перенаправление на страницу публикации
+     * /posts/{id}/edit?ownership_history=true
+     */
     @GetMapping("/posts/{postId}/ownership-history")
     public String showOwnershipHistoryByPost(@PathVariable("postId") int id) {
         return String.format(
@@ -104,6 +147,13 @@ public class PostController implements SessionControl {
         );
     }
 
+    /**
+     * Показывает в публикации информацию об изменении цены
+     * продажи автомобиля в хронологическом порядке
+     * @param id id публикации
+     * @return перенаправление на страницу публикации
+     * /posts/{id}/edit?price_history=true
+     */
     @GetMapping("posts/{postId}/price-history")
     public String showPriceHistoryByUserPost(@PathVariable("postId") int id) {
         return String.format(
@@ -111,6 +161,12 @@ public class PostController implements SessionControl {
         );
     }
 
+    /**
+     * Предоставляет пользователю форму для обновления данных в публикации
+     * @param id id публикации
+     * @param model Model
+     * @return вид /post/post-update
+     */
     @GetMapping("posts/{postId}/update")
     public String formUpdatePost(@PathVariable("postId") int id,
                                  Model model) {
@@ -119,12 +175,25 @@ public class PostController implements SessionControl {
         return "/post/post-update";
     }
 
-
+    /**
+     * Показывает в публикации информацию о контактных данных продавца
+     * @param id id публикации
+     * @return перенаправление на страницу публикации
+     * /posts/{id}/edit?contact=true
+     */
     @GetMapping("/posts/contacts/{postId}")
     public String showPostContacts(@PathVariable("postId") int id) {
         return String.format("redirect:/posts/%d/edit?contact=true", id);
     }
 
+    /**
+     * Добавляет публикацию в список избранных пользователем публикаций
+     * @param id id публикации
+     * @param model Model
+     * @return перенаправление на страницу со всеми избранными
+     * пользователем публикациями
+     * /posts/subscriptions
+     */
     @GetMapping("/posts/subs/{postId}")
     public String addSubscriptionToPost(@PathVariable("postId") int id,
                                       Model model) {
@@ -137,6 +206,14 @@ public class PostController implements SessionControl {
         return "redirect:/posts/subscriptions";
     }
 
+    /**
+     * Удаляет публикацию из списка избранных пользователем публикаций
+     * @param id id публикации
+     * @param model Model
+     * @return перенаправление на страницу со всеми избранными
+     * пользователем публикациями
+     * /posts/subscriptions
+     */
     @GetMapping("posts/subscription/{postId}/remove")
     public String removeSubscriptionFromPost(@PathVariable("postId") int id,
                                              Model model) {
@@ -150,6 +227,13 @@ public class PostController implements SessionControl {
 
     }
 
+    /**
+     * Добавляет в модель все избранные пользователем публикации,
+     * добавляет в модель список всех автобрендов, найденных в БД,
+     * для демонстрации пользователю
+     * @param model Model
+     * @return вид post/post-all-subscriptions
+     */
     @GetMapping("/posts/subscriptions")
     public String allUserSubscriptionsToPosts(Model model) {
         User user = (User) model.getAttribute("user");
@@ -159,6 +243,13 @@ public class PostController implements SessionControl {
         model.addAttribute("brands", carBrandService.findAll());
         return "post/post-all-subscriptions";
     }
+    /**
+     * Добавляет в модель все публикации, созданные пользователем,
+     * добавляет в модель список всех автобрендов, найденных в БД,
+     * для демонстрации пользователю
+     * @param model Model
+     * @return вид post/post-all-by-user
+     */
 
     @GetMapping("/posts/users/{userId}")
     public String allByUserId(@PathVariable("userId") int id,
@@ -168,12 +259,32 @@ public class PostController implements SessionControl {
         return "post/post-all-by-user";
     }
 
+    /**
+     * Предоставляет зарегистрированному пользователю сайта форму
+     * для создания публикации,
+     * добавляет в модель список всех автобрендов, найденных в БД,
+     * для демонстрации пользователю
+     * @param post публикация
+     * @param model Model
+     * @return вид post/post-create
+     */
     @GetMapping("/posts/new")
     public String formAddPost(@ModelAttribute Post post, Model model) {
         model.addAttribute("brands", carBrandService.findAll());
         return "post/post-create";
     }
 
+    /**
+     * Добавляет в модель все публикации,
+     * отфильтрованные по дате создания за минувшие сутки,
+     * добавляет в модель список всех автобрендов, найденных в БД,
+     * добавляет в модель метку filter2 = true,
+     * добавляет в модель сообщение msg,
+     * для демонстрации пользователю
+     * @param model Model
+     * @return страницу со всеми публикациями с учетом фильтра (filter2)
+     * post/post-all
+     */
     @GetMapping("/posts/filter/last_day")
     public String allForLastDay(Model model) {
         String message = "Отфильтрованные за сутки объявления";
@@ -184,6 +295,20 @@ public class PostController implements SessionControl {
         return "post/post-all";
     }
 
+    /**
+     * Добавляет в модель все публикации,
+     * отфильтрованные по бренду автомобиля и диапазону цены продажи,
+     * добавляет в модель список всех автобрендов, найденных в БД,
+     * добавляет в модель метку filter3 = true,
+     * добавляет в модель сообщение msg,
+     * добавляет в модель данные для заполнения поля фильтра бренда fBrand,
+     * добавляет в модель данные для заполнения поля фильтра нижней границы цены fLprice,
+     * добавляет в модель данные для заполнения поля фильтра верхней границы цены fUprice,
+     * для демонстрации пользователю
+     * @param model Model
+     * @return страницу со всеми публикациями с учетом фильтра (filter3)
+     * post/post-all
+     */
     @GetMapping("posts/filter/by_brand_price")
     public String allByCarBrandAndPrice(HttpServletRequest req, Model model) {
         String[] parameters = req.getParameterValues("p");
@@ -209,6 +334,22 @@ public class PostController implements SessionControl {
         return "post/post-all";
     }
 
+    /**
+     * Добавляет в модель все публикации,отфильтрованные по параметрам автомобиля,
+     * добавляет в модель список всех автобрендов, найденных в БД,
+     * добавляет в модель метку filter1 = true,
+     * добавляет в модель сообщение msg,
+     * добавляет в модель данные для заполнения поля фильтра бренда fBrand,
+     * добавляет в модель данные для заполнения поля фильтра тип кузова fBodyType,
+     * добавляет в модель данные для заполнения поля фильтра год выпуска fModelYear
+     * добавляет в модель данные для заполнения поля фильтра пробег fMileage,
+     * добавляет в модель данные для заполнения поля фильтра тип коробки передач fTransmission
+     * добавляет в модель данные для заполнения поля фильтра объём двигателя fVolume
+     * для демонстрации пользователю
+     * @param model Model
+     * @return страницу со всеми публикациями с учетом фильтра (filter1)
+     * post/post-all
+     */
     @GetMapping("/posts/filter/by_parameters")
     public String allByParameters(HttpServletRequest req, Model model) {
         String[] parameters = req.getParameterValues("p");
@@ -240,6 +381,19 @@ public class PostController implements SessionControl {
         return "post/post-all";
     }
 
+    /**
+     * Добавляет новую публикацию в БД сайта
+     * @param post публикация
+     * @param engine двигатель
+     * @param car автомобиль
+     * @param price цена
+     * @param brandId id автобренда
+     * @param file фото автомобиля
+     * @param req HttpServletRequest
+     * @param model Model
+     * @return перенаправление на главную страницу
+     * /index
+     */
     @PostMapping("/addPost")
     public String add(@ModelAttribute Post post,
                       @ModelAttribute Engine engine,
@@ -272,6 +426,12 @@ public class PostController implements SessionControl {
         return "redirect:/index";
     }
 
+    /**
+     * Формирует список автовладельцев автомобиля
+     * @param car автомобиль
+     * @param user автор публикации (последний автовладелец)
+     * @param req HttpServletRequest
+     */
     private void addDriversToCar(Car car, User user, HttpServletRequest req)
                                                         throws ParseException {
         String[] driverNames = req.getParameterValues("firstname");
@@ -295,6 +455,15 @@ public class PostController implements SessionControl {
                                             });
     }
 
+    /**
+     * Обновляет содержимое публикации в БД сайта
+     * @param engine двигатель
+     * @param price цена
+     * @param file фото автомобиля
+     * @param req HttpServletRequest
+     * @return перенаправление на главную страницу
+     * /index
+     */
     @PostMapping("/updatePost")
     public String update(@ModelAttribute Engine engine,
                          @ModelAttribute Price price,
@@ -331,18 +500,38 @@ public class PostController implements SessionControl {
         return "redirect:/index";
     }
 
+    /**
+     * Удаляет публикацию из БД сайта по id (роль - Пользователь)
+     * @param id id публикации
+     * @return перенаправление на главную страницу
+     * /index
+     */
     @GetMapping("/posts/{postId}/delete")
     public String delete(@PathVariable("postId") int id) {
         deletePostById(id);
         return "redirect:/index";
     }
 
+    /**
+     * Удаляет публикацию из БД сайта по id (роль - Администратор)
+     * @param id id публикации
+     * @return перенаправление на страницу с архивными публикациями
+     * /posts/archive
+     */
     @GetMapping("posts/{postId}/delete_by_admin")
     public String deleteByAdmin(@PathVariable("postId") int id) {
         deletePostById(id);
         return "redirect:/posts/archive";
     }
 
+    /**
+     * Помечает публикацию в БД сайта, как проданную
+     * @param id id публикации
+     * @param model Model
+     * @return перенаправление на страницу со всеми публикации,
+     * созданными пользователем
+     * /posts/users/{userId}
+     */
     @GetMapping("/posts/{postId}/archive")
     public String addToArchive(@PathVariable("postId") int id, Model model) {
         Optional<Post> postInDb = postService.findById(id);
@@ -355,12 +544,22 @@ public class PostController implements SessionControl {
         return String.format("redirect:/posts/users/%d", Objects.requireNonNull(user).getId());
     }
 
+    /**
+     * Удаляет из БД сайта все публикации, помеченные как проданные
+     * (роль - Админитстратор)
+     * @return перенаправление на страницу со всеми архивными публикациями
+     * /posts/archive
+     */
     @GetMapping("/posts/archive/delete/all")
     public String deleteAllFromArchive() {
         adminPostService.deleteAllArchivedPosts();
         return "redirect:/posts/archive";
     }
 
+    /**
+     * Удаляет публикацию из БД по id
+     * @param id публикации
+     */
     private void deletePostById(int id) {
         Optional<Post> postInDb = postService.findById(id);
         postInDb.ifPresent(postService::delete);

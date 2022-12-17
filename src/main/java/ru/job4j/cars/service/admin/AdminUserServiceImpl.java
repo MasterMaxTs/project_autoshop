@@ -1,6 +1,6 @@
 package ru.job4j.cars.service.admin;
 
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.job4j.cars.model.User;
 import ru.job4j.cars.repository.users.UserRepository;
@@ -13,13 +13,16 @@ import java.util.stream.Collectors;
  * @author Maxim Tsurkanov
  */
 @Service
-@AllArgsConstructor
 public class AdminUserServiceImpl implements AdminUserService {
 
     /**
      * Делегирование выполнения CRUD-операций хранилищу пользователей
      */
     private final UserRepository store;
+
+    public AdminUserServiceImpl(@Qualifier("userRepositoryImpl") UserRepository store) {
+        this.store = store;
+    }
 
     @Override
     public List<User> findAllDeletionRequests() {

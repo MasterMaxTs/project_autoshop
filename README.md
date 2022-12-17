@@ -1,7 +1,7 @@
 
 # Job4j_cars 
 [![Build Status](https://app.travis-ci.com/MasterMaxTs/project_autoshop.svg?branch=master)](https://app.travis-ci.com/MasterMaxTs/project_autoshop)
-
+[![codecov](https://codecov.io/gh/MasterMaxTs/project_autoshop/branch/master/graph/badge.svg?token=Z2LCYQ24W4)](https://codecov.io/gh/MasterMaxTs/project_autoshop)
 
 ### Это проект по созданию сайта с объявлениями по продаже машин, доступного в браузере.
 #### Данный проект позволит _незарегистрированным_ пользователям: 

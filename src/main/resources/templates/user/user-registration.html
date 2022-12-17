@@ -80,22 +80,21 @@
         <br><br>
         <div class="form-group">
             <input type="hidden" name="flag" th:value="${flag}"/>
-            <label for="name" th:text="${flag} ? 'Новое имя' : 'Имя'"></label>
+            <label for="name">Имя</label>
             <br>
             <input type="text" id="name" placeholder="Введите имя" th:field="*{name}" required/>
             <span th:if="${msgName} != null" th:text="${msgName}" style="color: crimson"></span>
             <br><br>
-            <label for="phone" th:text="${flag} ? 'Новый телефон (сотовый)' : 'Телефон (сотовый)'"></label>
+            <label for="phone">Сотовый телефон</label>
             <br>
             <input type="tel" pattern="^[+]*[0-9]{11}" id="phone"
                                                     placeholder="Введите телефон (11 цифр)" th:field="*{phone}" required/>
             <br><br>
             <label for="email">Email</label>
             <br>
-            <input th:if="${flag == null}" type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+            <input type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
                                             id="email" placeholder="Введите email" th:field="*{email}" required/>
             <span th:if="${msgEmail} != null" th:text="${msgEmail}" style="color: crimson"></span>
-            <input th:if="${flag != null}" type="text" th:field="*{email}" disabled/>
             <br><br>
             <label for="login">Логин</label>
             <br>
@@ -103,7 +102,7 @@
             <span th:if="${msgLogin} != null" th:text="${msgLogin}" style="color: crimson"></span>
             <input th:if="${flag != null}" type="text" th:field="*{login}" disabled/>
             <br><br>
-            <label for="pwd" th:text="${flag} ? 'Новый пароль' : 'Пароль'"></label>
+            <label for="pwd">Пароль</label>
             <br>
             <input type="password" id="pwd" placeholder="Придумайте password" th:field="*{password}" required/>
             <br><br>

@@ -57,15 +57,21 @@ public class UserController implements SessionControl {
                       HttpServletRequest req
                       ) {
         if (flag != null) {
-            HttpSession session = req.getSession();
-            userService.update(user);
-            session.setAttribute("user", user);
-            return "user/user-update-confirm";
+            try {
+                userService.update(user);
+                HttpSession session = req.getSession();
+                session.setAttribute("user", user);
+            } catch (IllegalUserNameException exception) {
+                return getRedirectDueToInvalidUserName(flag, ra, exception);
+            } catch (IllegalUserEmailException exception) {
+                return getRedirectDueToInvalidEmailName(flag, ra, exception);
+            }
+                return "user/user-update-confirm";
         }
-        user.setCreated(LocalDateTime.now());
-        HttpSession session = req.getSession();
         try {
+            user.setCreated(LocalDateTime.now());
             User savedUser = userService.create(user);
+            HttpSession session = req.getSession();
             session.setAttribute("user", savedUser);
         } catch (IllegalUserNameException exception) {
             return getRedirectDueToInvalidUserName(flag, ra, exception);
@@ -132,11 +138,14 @@ public class UserController implements SessionControl {
                         HttpServletRequest req) {
         try {
             Optional<User> userInDb = userService.findByLoginAndPassword(user);
-            HttpSession session = req.getSession();
-            session.setAttribute("user", userInDb.get());
+            userInDb.ifPresent(u -> {
+                                     HttpSession session = req.getSession();
+                                     session.setAttribute("user", u);
+            });
         } catch (IllegalArgumentException exception) {
-            String msg = "Некорректный login или password!";
-            ra.addAttribute("msgFail", msg);
+            ra.addAttribute("msgFail",
+                exception.getMessage() + "Повторите ввод login и password!"
+            );
             return "redirect:/loginPage";
         }
         return "redirect:/index";

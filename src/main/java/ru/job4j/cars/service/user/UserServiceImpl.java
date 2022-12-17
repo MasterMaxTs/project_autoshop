@@ -33,27 +33,29 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(User user) {
-        Optional<User> userOptional = findByEmail(user);
         if (user.getName().equals(GUEST)) {
             throw new IllegalUserNameException(
                     String.format(
-                            "Пользователь с введенным именем '%s'"
-                                    + "не может быть зарегистрирован", user.getName())
+                            "Пользователь с указанным именем '%s'"
+                                    + "не может быть зарегистрирован. ",
+                            user.getName())
             );
         }
-        if (userOptional.isPresent()) {
-            throw new IllegalUserEmailException(
-                    String.format(
-                            "Пользователь с введенным email '%s' уже существует"
-                                    + " и не может быть зарегистрирован", user.getEmail())
-            );
-        }
-        userOptional = findByLogin(user);
+        Optional<User> userOptional = findByLogin(user);
         if (userOptional.isPresent()) {
             throw new IllegalUserLoginException(
                     String.format(
-                            "Пользователь с введенным login '%s' уже существует"
-                    + " и не может быть зарегистрирован", user.getEmail())
+                            "Пользователь с указанным login '%s' уже существует"
+                    + " и не может быть зарегистрирован. ", user.getEmail())
+            );
+        }
+        userOptional = findByEmail(user);
+        if (userOptional.isPresent()) {
+            throw new IllegalUserEmailException(
+                    String.format(
+                            "Пользователь с указанным email '%s' уже существует"
+                                    + " и не может быть зарегистрирован. ",
+                            user.getEmail())
             );
         }
         return store.create(user);
@@ -61,6 +63,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void update(User user) {
+        if (user.getName().equals(GUEST)) {
+            throw new IllegalUserNameException(
+                    String.format(
+                            "Пользователь с указанным именем '%s'"
+                                    + "не может быть зарегистрирован. ",
+                            user.getName())
+            );
+        }
+        Optional<User> optionalUser = findByEmail(user);
+        if (optionalUser.isPresent() && optionalUser.get().getId() != user.getId()) {
+            throw new IllegalUserEmailException(
+                    String.format(
+                            "Пользователь с указанным email '%s' уже "
+                                    + "существует и не может быть зарегистрирован. ",
+                            user.getEmail())
+            );
+        }
         store.update(user);
     }
 
@@ -85,8 +104,8 @@ public class UserServiceImpl implements UserService {
         if (userOptional.isEmpty()) {
             throw new IllegalArgumentException(
                     String.format(
-                            "The user with login = %s and password = %s"
-                                    + " was not found in the database",
+                            "Пользователь с указанным login = %s и password"
+                                    + "= %s не найден. ",
                             user.getLogin(), user.getPassword()
                     )
             );

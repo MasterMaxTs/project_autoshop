@@ -6,7 +6,7 @@ import ru.job4j.cars.exception.IllegalUserEmailException;
 import ru.job4j.cars.exception.IllegalUserLoginException;
 import ru.job4j.cars.exception.IllegalUserNameException;
 import ru.job4j.cars.model.User;
-import ru.job4j.cars.repository.users.UserRepository;
+import ru.job4j.cars.repository.user.UserRepository;
 
 import java.util.Optional;
 

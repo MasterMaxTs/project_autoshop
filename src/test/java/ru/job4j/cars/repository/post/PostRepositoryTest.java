@@ -1,4 +1,4 @@
-package ru.job4j.cars.repository.posts;
+package ru.job4j.cars.repository.post;
 
 import org.hibernate.SessionFactory;
 import org.junit.After;
@@ -8,15 +8,15 @@ import org.junit.Test;
 import ru.job4j.cars.Job4jCarsApplication;
 import ru.job4j.cars.model.*;
 import ru.job4j.cars.repository.CrudRepository;
-import ru.job4j.cars.repository.cars.CarRepository;
-import ru.job4j.cars.repository.cars.CarRepositoryImpl;
-import ru.job4j.cars.repository.cars.carbrands.CarBrandRepository;
-import ru.job4j.cars.repository.cars.carbrands.CarBrandRepositoryImpl;
+import ru.job4j.cars.repository.car.CarRepository;
+import ru.job4j.cars.repository.car.CarRepositoryImpl;
+import ru.job4j.cars.repository.car.carbrand.CarBrandRepository;
+import ru.job4j.cars.repository.car.carbrand.CarBrandRepositoryImpl;
 import ru.job4j.cars.repository.crud.CrudRepositoryImpl;
-import ru.job4j.cars.repository.drivers.DriverRepository;
-import ru.job4j.cars.repository.drivers.DriverRepositoryImpl;
-import ru.job4j.cars.repository.users.UserRepository;
-import ru.job4j.cars.repository.users.UserRepositoryImpl;
+import ru.job4j.cars.repository.driver.DriverRepository;
+import ru.job4j.cars.repository.driver.DriverRepositoryImpl;
+import ru.job4j.cars.repository.user.UserRepository;
+import ru.job4j.cars.repository.user.UserRepositoryImpl;
 import ru.job4j.cars.service.admin.AdminPostService;
 import ru.job4j.cars.service.admin.AdminPostServiceImpl;
 

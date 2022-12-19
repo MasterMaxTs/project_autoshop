@@ -1,4 +1,4 @@
-package ru.job4j.cars.repository.cars.carbrands;
+package ru.job4j.cars.repository.car.carbrand;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;

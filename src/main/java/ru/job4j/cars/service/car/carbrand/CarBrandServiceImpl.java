@@ -3,7 +3,7 @@ package ru.job4j.cars.service.car.carbrand;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.cars.model.Brand;
-import ru.job4j.cars.repository.cars.carbrands.CarBrandRepository;
+import ru.job4j.cars.repository.car.carbrand.CarBrandRepository;
 
 import java.util.List;
 import java.util.Optional;

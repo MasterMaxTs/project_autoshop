@@ -3,7 +3,7 @@ package ru.job4j.cars.service.admin;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.job4j.cars.model.User;
-import ru.job4j.cars.repository.users.UserRepository;
+import ru.job4j.cars.repository.user.UserRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;

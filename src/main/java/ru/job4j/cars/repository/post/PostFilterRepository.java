@@ -1,4 +1,4 @@
-package ru.job4j.cars.repository.posts;
+package ru.job4j.cars.repository.post;
 
 import ru.job4j.cars.model.Post;
 

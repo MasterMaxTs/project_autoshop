@@ -1,4 +1,4 @@
-package ru.job4j.cars.repository.drivers;
+package ru.job4j.cars.repository.driver;
 
 import ru.job4j.cars.model.Driver;
 import ru.job4j.cars.repository.Repository;

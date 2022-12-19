@@ -1,4 +1,4 @@
-package ru.job4j.cars.repository.users;
+package ru.job4j.cars.repository.user;
 
 import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Repository;

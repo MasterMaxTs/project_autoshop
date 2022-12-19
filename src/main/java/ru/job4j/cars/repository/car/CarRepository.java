@@ -1,4 +1,4 @@
-package ru.job4j.cars.repository.cars;
+package ru.job4j.cars.repository.car;
 
 import ru.job4j.cars.model.Car;
 import ru.job4j.cars.repository.Repository;

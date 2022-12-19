@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.cars.model.Post;
 import ru.job4j.cars.model.User;
-import ru.job4j.cars.repository.posts.PostFilterRepository;
-import ru.job4j.cars.repository.posts.PostRepository;
+import ru.job4j.cars.repository.post.PostFilterRepository;
+import ru.job4j.cars.repository.post.PostRepository;
 
 import java.util.List;
 import java.util.Optional;

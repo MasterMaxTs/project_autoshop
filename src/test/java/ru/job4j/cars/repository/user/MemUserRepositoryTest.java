@@ -1,4 +1,4 @@
-package ru.job4j.cars.repository.users;
+package ru.job4j.cars.repository.user;
 
 import org.junit.Before;
 import org.junit.Test;

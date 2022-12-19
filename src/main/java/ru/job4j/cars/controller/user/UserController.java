@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ru.job4j.cars.controller.SessionControl;
+import ru.job4j.cars.controller.SessionController;
 import ru.job4j.cars.exception.IllegalUserEmailException;
 import ru.job4j.cars.exception.IllegalUserLoginException;
 import ru.job4j.cars.exception.IllegalUserNameException;
@@ -23,7 +23,7 @@ import java.util.Optional;
  */
 @Controller
 @AllArgsConstructor
-public class UserController implements SessionControl {
+public class UserController extends SessionController {
 
     /**
      * Ссылки на слои сервисов

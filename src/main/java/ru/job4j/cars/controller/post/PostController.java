@@ -10,7 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.job4j.cars.controller.SessionControl;
+import ru.job4j.cars.controller.SessionController;
 import ru.job4j.cars.model.*;
 import ru.job4j.cars.service.admin.AdminPostService;
 import ru.job4j.cars.service.car.CarService;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  */
 @Controller
 @AllArgsConstructor
-public class PostController implements SessionControl {
+public class PostController extends SessionController {
 
     /**
      * Ссылки на слои сервисов

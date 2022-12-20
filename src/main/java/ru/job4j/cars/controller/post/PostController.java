@@ -113,7 +113,7 @@ public class PostController extends SessionController {
             rsl = ResponseEntity.ok()
                     .headers(new HttpHeaders())
                     .contentLength(car.getPhoto().length)
-                    .contentType(MediaType.parseMediaType("application/octet-stream"))
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(new ByteArrayResource(car.getPhoto()));
         }
         return rsl;

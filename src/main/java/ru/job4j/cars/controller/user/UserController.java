@@ -238,7 +238,7 @@ public class UserController extends SessionController {
     }
 
     /**
-     * Выполняет процедуру завершения сессии
+     * Выполняет процедуру завершения сеанса пользователя
      * @param session HttpSession
      * @return перенаправление на форму аутентификации
      * /loginPage

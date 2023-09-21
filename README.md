@@ -1,7 +1,29 @@
-
-# Job4j_cars 
+# Job4j_autoshop
+#### Сервис "Cайт объявлений по продаже поддержанных машин"
 [![Build Status](https://app.travis-ci.com/MasterMaxTs/project_autoshop.svg?branch=master)](https://app.travis-ci.com/MasterMaxTs/project_autoshop)
-[![codecov](https://codecov.io/gh/MasterMaxTs/project_autoshop/branch/master/graph/badge.svg?token=Z2LCYQ24W4)](https://codecov.io/gh/MasterMaxTs/project_autoshop)
+[![codecov](https://codecov.io/gh/MasterMaxTs/project_autoshop/branch/master/graph/badge.svg?token=Z2LCYQ24W4)](https://codecov.io/gh/MasterMaxTs/project_autoshop)<br>
+
+
+![](https://img.shields.io/badge/java-11-4AB197)&nbsp;&nbsp;&nbsp;<br>
+![](https://img.shields.io/badge/maven-3.6.3-4AB197)&nbsp;&nbsp;&nbsp;<br>
+![](https://img.shields.io/badge/maven--checkstyle--plugin-3.1.1-4AB197)&nbsp;&nbsp;&nbsp;
+![](https://img.shields.io/badge/maven--javadoc--plugin-3.2.0-4AB197)&nbsp;&nbsp;&nbsp;
+![](https://img.shields.io/badge/liquibase--maven--plugin-3.6.2-4AB197)&nbsp;&nbsp;&nbsp;
+![](https://img.shields.io/badge/jacoco--maven--plugin-0.8.6-4AB197)&nbsp;&nbsp;&nbsp;<br>
+![](https://img.shields.io/badge/spring--boot--starter--web-2.7.3-4AB197)&nbsp;&nbsp;&nbsp;
+![](https://img.shields.io/badge/spring--boot--starter--thymeleaf-2.7.3-4AB197)&nbsp;&nbsp;&nbsp;
+![](https://img.shields.io/badge/hibenate--core-5.6.11-4AB197)&nbsp;&nbsp;&nbsp;
+![](https://img.shields.io/badge/lombok-1.18.24-4AB197)&nbsp;&nbsp;&nbsp;<br>
+![](https://img.shields.io/badge/Style:_bootstrap-4.4.1-4AB197)&nbsp;&nbsp;&nbsp;
+![](https://img.shields.io/badge/Style:_html-5-4AB197)&nbsp;&nbsp;&nbsp;
+![](https://img.shields.io/badge/Style:_css-3-4AB197)&nbsp;&nbsp;&nbsp;
+![](https://img.shields.io/badge/DBMS:_PostgreSQL-14.0-4AB197)&nbsp;&nbsp;&nbsp;<br>
+![](https://img.shields.io/badge/Test:_junit-4.13.2-4AB197)&nbsp;&nbsp;&nbsp;
+![](https://img.shields.io/badge/Test:_hamcrest--all-1.3-4AB197)&nbsp;&nbsp;&nbsp;
+![](https://img.shields.io/badge/Test:_mockito--core-4.9.0-4AB197)&nbsp;&nbsp;&nbsp;
+![](https://img.shields.io/badge/Test:_h2database-1.4.200-4AB197)&nbsp;&nbsp;&nbsp;
+
+
 
 ### Это проект по созданию сайта с объявлениями по продаже машин, доступного в браузере.
 #### Данный проект позволит _незарегистрированным_ пользователям: 
@@ -67,21 +89,18 @@
 ### Стек технологий
 
 - Java 11
-- Spring boot v.2.7.3.
-- Thymeleaf v.2.7.3.
+- Spring-boot-starter-web v.2.7.3.
+- Spring-boot-starter-thymeleaf v.2.7.3.
 - Bootstrap v.4.4.1.
-- Hibernate v.5.6.11.
+- Hibernate-core v.5.6.11.
 - Lombok v.1.18.24.
 - СУБД: PostgreSQL v.14.0.
-- Liquibase plugin v.3.6.2
-
-
+<br><br>
 - Тестирование:
-  - junit v.4.13.2
-  - hamcrest v.1.3
-  - mockito-core v.4.9.0
-  - Liquibase plugin v.3.6.2
-  - БД: h2database v.1.4.200
+  - JUnit v.4.13.2
+  - Hamcrest v.1.3
+  - Mockito-core v.4.9.0
+  - БД: H2database v.1.4.200
 
 ---
 ### Требования к окружению
@@ -91,30 +110,38 @@
 
 ---
 ### Запуск проекта
-1. Создать базу данных с именем cars:
+1. Установить СУБД PostgreSQL
+
+
+2. Создать базу данных с именем cars:<br>
 ```create database cars;```
 
 
-2. Скачать файлы проекта с github в выбранную директорию
+3. Скачать файлы проекта с github по ссылке и разархивировать в выбранную директорию:<br>
+   [https://github.com/MasterMaxTs/project_autoshop/archive](https://github.com/MasterMaxTs/project_autoshop/archive/refs/heads/master.zip)
 
 
-3. Открыть командную строку, перейти в директорию проекта и выполнить команду:
-```mvn liquibase:update -Pproduction```
+4. Перейти в директорию проекта, открыть командную строку и выполнить команды:
+- Для <ins>первого</ins> запуска приложения выполнить последовательно команды:
+    - ```mvn liquibase:update -Pproduction```
+    - ```mvn exec:java -Dexec.mainClass="ru.job4j.cars.Job4jCarsApplication```
+    - внизу окна командной строки скопировать в буфер обмена url:
+      <br>http://localhost:8080/index
 
 
-4. В директории проекта в командной строке выполнить команду:
-```mvn exec:java -Dexec.mainClass="ru.job4j.cars.Job4jCarsApplication```
+- Для <ins>последующего</ins> запуска приложения выполнять команду:
+    - ```mvn exec:java -Dexec.mainClass="ru.job4j.cars.Job4jCarsApplication```
+    - внизу окна командной строки скопировать в буфер обмена url:
+      <br>http://localhost:8080/index
 
+      
+      
+5. Вставить из буфера обмена url в адресную строку браузера:<br>
+   [http://localhost:8080/index](http://localhost:8080/index)
 
-5. В окне командной строки скопировать в буфер обмена url  
-
-    http://localhost:8080/index
-
-
-6. Вставить из буфера обмена url в адресную строку браузера
-
-
-7. В базу данных пользователей сайта добавлена одна учётная запись пользователя в роли Администратор.
+   
+   
+6. В базу данных пользователей сайта добавлена одна учётная запись пользователя в роли Администратор.
 
     > администратору сайта необходимо выполнить вход в систему со следующими учётными данными и сменить пароль
     > * логин: _admin_ 

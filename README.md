@@ -21,7 +21,8 @@
 ![](https://img.shields.io/badge/Test:_junit-4.13.2-4AB197)&nbsp;&nbsp;&nbsp;
 ![](https://img.shields.io/badge/Test:_hamcrest--all-1.3-4AB197)&nbsp;&nbsp;&nbsp;
 ![](https://img.shields.io/badge/Test:_mockito--core-4.9.0-4AB197)&nbsp;&nbsp;&nbsp;
-![](https://img.shields.io/badge/Test:_h2database-1.4.200-4AB197)&nbsp;&nbsp;&nbsp;
+![](https://img.shields.io/badge/Test:_h2database-1.4.200-4AB197)&nbsp;&nbsp;&nbsp;<br><br>
+![](https://img.shields.io/badge/Package:-.war-4AB197)&nbsp;&nbsp;&nbsp;
 
 
 
@@ -35,7 +36,7 @@
 
 3. Производить поиск объявлений, применив один из трёх фильтров
     > * Фильтр объявлений по заданным параметрам автомобиля
-    > * Фильтр объявлений по заданной марке автомомобиля и диапазону цены (между минимальной и максимальной)
+    > * Фильтр объявлений по заданной марке автомобиля и диапазону цены (между минимальной и максимальной)
     > * Фильтр объявлений, опубликованных за прошедшие сутки
 
 4. Просматривать содержимое объявлений  
@@ -89,6 +90,8 @@
 ### Стек технологий
 
 - Java 11
+- Maven 3.6.3
+- Liquibase-maven-plugin v.3.6.2
 - Spring-boot-starter-web v.2.7.3.
 - Spring-boot-starter-thymeleaf v.2.7.3.
 - Bootstrap v.4.4.1.
@@ -123,14 +126,14 @@
 
 4. Перейти в директорию проекта, открыть командную строку и выполнить команды:
 - Для <ins>первого</ins> запуска приложения выполнить последовательно команды:
-    - ```mvn liquibase:update -Pproduction```
-    - ```mvn exec:java -Dexec.mainClass="ru.job4j.cars.Job4jCarsApplication```
+    - ```mvn package -Pproduction -Dmaven.test.skip=true```
+    - ```java -jar target/cars-1.0.war```
     - внизу окна командной строки скопировать в буфер обмена url:
       <br>http://localhost:8080/index
 
 
 - Для <ins>последующего</ins> запуска приложения выполнять команду:
-    - ```mvn exec:java -Dexec.mainClass="ru.job4j.cars.Job4jCarsApplication```
+    - ```java -jar target/cars-1.0.war```
     - внизу окна командной строки скопировать в буфер обмена url:
       <br>http://localhost:8080/index
 
@@ -231,5 +234,7 @@
 
 ---
 ### Контакты
-* email: max86ts@gmail.com
-* telegram: matsurkanov
+* Email: java.dev-maxim.tsurkanov@yandex.ru
+* Skype: https://join.skype.com/invite/ODADx0IJ3BBu
+* VK: https://m.vk.com/id349328153
+* Telegram: matsurkanov
